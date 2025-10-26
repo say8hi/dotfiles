@@ -1,0 +1,127 @@
+@import "../../../.cache/colors-waybar.css";
+
+* {
+  font-size: 13px;
+  font-family: "FiraCode Nerd Font";
+  color: @foreground;
+}
+#waybar {
+  background: transparent;
+  border-radius: 5px;
+}
+#workspaces {
+  border-radius: 5px;
+  box-shadow: 0px 0px black;
+}
+
+#workspaces,
+#network,
+#wireplumber,
+#cpu,
+#memory,
+#language,
+#clock,
+#custom-power,
+#custom-crypto,
+#tray,
+#custom-cava,
+#custom-notification {
+  margin-left: 5px;
+  margin-right: 5px;
+  background: @surface;
+  border-radius: 5px 0px 0px 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#network,
+#wireplumber,
+#cpu,
+#memory,
+#language {
+  margin: 0px;
+  border-radius: 0px;
+}
+#network {
+  border-radius: 5px 0px 0px 5px;
+}
+#wireplumber {
+  border-radius: 0px 5px 5px 0px;
+  margin-right: 5px;
+}
+
+#cpu {
+  border-radius: 5px 0px 0px 5px;
+}
+
+#language {
+  margin-right: 5px;
+  border-radius: 0px 5px 5px 0px;
+}
+
+#clock,
+#workspaces,
+#custom-power,
+#battery,
+#custom-crypto,
+#custom-cava,
+#tray,
+#custom-notification {
+  border-radius: 5px;
+}
+
+#tray {
+  margin: 0px;
+}
+
+#custom-power {
+  color: @error;
+  margin-right: 10px;
+  padding-right: 14px;
+}
+
+#custom-crypto {
+  font-family: cryptofont;
+}
+
+#custom-cava {
+  font-family: "FiraCode Nerd Font", "Font Awesome 6 Free";
+  font-size: 14px;
+  padding: 0 8px;
+  color: @primary;
+  margin: 0 4px;
+  min-width: 80px;
+}
+
+@keyframes equalizer {
+  0% {
+    color: @primary;
+  }
+  25% {
+    color: @secondary;
+  }
+  50% {
+    color: @tertiary;
+  }
+  75% {
+    color: @error;
+  }
+  100% {
+    color: @primary;
+  }
+}
+
+#custom-cava.playing {
+  animation-name: equalizer;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+#wireplumber {
+  color: @tertiary;
+}
+
+#network {
+  color: @primary;
+}

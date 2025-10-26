@@ -1,0 +1,49 @@
+[config]
+reload_apps = true
+
+[config.reload_apps_list]
+kitty = true
+gtk_theme = true
+
+[templates.kitty]
+input_path = '~/.config/matugen/templates/kitty-colors.conf'
+output_path = '~/dotfiles/config/kitty/colors.conf'
+post_hook = "killall -SIGUSR1 kitty &"
+
+[templates.waybar]
+input_path = '~/.config/matugen/templates/colors.css'
+output_path = '~/.cache/colors-waybar.css'
+
+[templates.rofi]
+input_path = '~/.config/matugen/templates/colors-rofi.rasi'
+output_path = '~/.cache/colors-rofi.rasi'
+
+[templates.nvim]
+input_path = '~/.config/matugen/templates/nvim-colors.json'
+output_path = '~/.cache/nvim/colors.json'
+
+[templates.wlogout]
+input_path = '~/.config/matugen/templates/colors-wlogout.css'
+output_path = '~/.cache/colors-wlogout.css'
+
+[templates.hyprlock]
+input_path = '~/.config/matugen/templates/hyprlock.conf'
+output_path = '~/dotfiles/config/hypr/hyprlock.conf'
+
+[templates.swaync]
+input_path = '~/.config/matugen/templates/swaync-style.css'
+output_path = '~/dotfiles/config/swaync/style.css'
+post_hook = "swaync-client -rs && swaync-client -R &"
+
+[templates.gtk3-colors]
+input_path = '~/.config/matugen/templates/gtk-3.0-colors.css'
+output_path = '~/dotfiles/config/gtk-3.0/colors.css'
+post_hook = "~/dotfiles/config/hypr/scripts/gtk.sh &"
+
+[templates.gtk4-colors]
+input_path = '~/.config/matugen/templates/gtky-4.0-colors.css'
+output_path = '~/dotfiles/config/gtk-4.0/colors.css'
+
+[templates.telegram]
+input_path = '~/.config/matugen/templates/telegram.tdesktop-theme'
+output_path = '~/.cache/telegram-material-you.tdesktop-theme'

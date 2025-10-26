@@ -1,0 +1,57 @@
+/*
+ * Main application launcher
+ * 900px wide, centered, with icons
+ */
+
+configuration {
+    modi: "drun,run";
+    font: "Fira Sans 11";
+    show-icons: true;
+    icon-theme: "kora";
+    display-drun: "APPS";
+    display-run: "RUN";
+    display-filebrowser: "FILES";
+    display-window: "WINDOW";
+    drun-display-format: "{name}";
+    hover-select: true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+    window-format: "{w} · {c} · {t}";
+}
+
+@import "~/.cache/colors-rofi.rasi"
+@import "~/.cache/current_wallpaper.rasi"
+@import "~/dotfiles/config/rofi/border.rasi"
+@import "~/dotfiles/config/rofi/common.rasi"
+
+window {
+    width: 900px;
+    x-offset: 0px;
+    y-offset: 0px;
+    location: center;
+    anchor: center;
+}
+
+mainbox {
+    background-image: @current-image;
+    children: ["imagebox", "listbox"];
+}
+
+imagebox {
+    padding: 18px;
+    background-color: transparent;
+    orientation: vertical;
+    children: ["inputbar", "dummy", "mode-switcher"];
+}
+
+listbox {
+    spacing: 20px;
+    background-color: transparent;
+    orientation: vertical;
+    children: ["message", "listview"];
+}
+
+listview {
+    columns: 1;
+    lines: 8;
+}

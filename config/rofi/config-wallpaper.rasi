@@ -1,0 +1,71 @@
+/*
+ * Wallpaper selector
+ * 761px wide, grid layout (6x3), icon-only
+ */
+
+configuration {
+    modi: "drun,run";
+    font: "Fira Sans 11";
+    show-icons: true;
+    hover-select: true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+    drun-display-format: "{name}";
+    window-format: "{w} · {c} · {t}";
+}
+
+@import "~/.cache/colors-rofi.rasi"
+@import "~/dotfiles/config/rofi/border.rasi"
+@import "~/dotfiles/config/rofi/common.rasi"
+
+window {
+    width: 761px;
+    x-offset: 0px;
+    y-offset: 65px;
+    location: north;
+    anchor: north;
+}
+
+mainbox {
+    children: ["listbox"];
+}
+
+listbox {
+    spacing: 20px;
+    background-color: transparent;
+    orientation: vertical;
+    children: ["inputbar", "message", "listview"];
+}
+
+listview {
+    columns: 6;
+    lines: 3;
+    scrollbar: true;
+    spacing: 10px;
+}
+
+element {
+    padding: 0px;
+    orientation: vertical;
+}
+
+element normal.normal {
+    border-color: @color11;
+}
+
+element selected.normal {
+    border-color: @foreground;
+}
+
+element alternate.normal {
+    border-color: @color11;
+}
+
+element-icon {
+    size: 100px;
+    horizontal-align: 0.5;
+}
+
+element-text {
+    enabled: false;
+}

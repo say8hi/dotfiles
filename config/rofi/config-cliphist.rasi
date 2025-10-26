@@ -1,0 +1,50 @@
+/*
+ * Clipboard history
+ * 400px wide, top-right, 8 rows
+ */
+
+configuration {
+    modi: "drun,run";
+    font: "Fira Sans 11";
+    show-icons: false;
+    icon-theme: "kora";
+    display-drun: "APPS";
+    display-run: "RUN";
+    display-filebrowser: "FILES";
+    display-window: "WINDOW";
+    hover-select: true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+    drun-display-format: "{name}";
+    window-format: "{w} · {c} · {t}";
+}
+
+@import "~/.cache/colors-rofi.rasi"
+@import "~/.cache/current_wallpaper.rasi"
+@import "~/dotfiles/config/rofi/border.rasi"
+@import "~/dotfiles/config/rofi/common.rasi"
+
+window {
+    width: 400px;
+    x-offset: -14px;
+    y-offset: 65px;
+    location: northeast;
+    anchor: northeast;
+}
+
+mainbox {
+    background-image: @current-image;
+    children: ["listbox"];
+}
+
+listbox {
+    spacing: 20px;
+    background-color: transparent;
+    orientation: vertical;
+    children: ["inputbar", "message", "listview"];
+}
+
+listview {
+    columns: 1;
+    lines: 8;
+}

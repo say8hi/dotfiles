@@ -1,0 +1,139 @@
+{
+	"layer":"top",
+	"position":"top",
+	"reload_style_on_change":true,
+		
+	"height":20,
+  "margin-top": 5,
+	"margin-left": 5,
+	"margin-right":5,
+	
+	"modules-left":[
+    "hyprland/workspaces",
+    "custom/crypto",
+    "custom/cava"
+  ],
+	"modules-right":[
+		"custom/notification",
+		"network",
+		"wireplumber",
+    "cpu",
+    "memory",
+    "hyprland/language",
+    "battery",
+    "tray",
+		"clock#time",
+		"custom/power"
+		],
+		
+		"hyprland/workspaces": {
+		    "all-outputs": true,
+		    "format": "{icon}",
+		    "format-icons": {
+		        "1": "⚜️",
+		        "2": "💎",
+		        "3": "💻",
+		        "4": "🌊",
+		        "5": "💸",
+		        "6": "🧲",
+		        "7": "💀",
+		        "8": "💡",
+		        "9": "🌀",
+		        "10": "☢️",
+		    },
+		    "on-scroll-up": "hyprctl dispatch workspace e+1 1>/dev/null",
+		    "on-scroll-down": "hyprctl dispatch workspace e-1 1>/dev/null",
+		    "sort-by-number": true,
+		    "active-only": false,
+    },
+	
+	"wireplumber": {
+		    "on-click": "pavucontrol",
+		    "on-click-right": "amixer sset Master toggle 1>/dev/null",
+		    "format": "{icon}  {volume}%",
+		    "format-muted": "  Muted",
+		    "format-icons": {
+		        "headphone": " ",
+		        "hands-free": " ",
+		        "headset": " ",
+		        "phone": " ",
+		        "portable": " ",
+		        "car": " ",
+		        "default": [" ", " ", " "]
+		    },
+		},
+        
+    "network": {
+        "format-wifi": "   {essid}  ",
+        "format-ethernet": "   {ifname}",
+        "format-linked": "  {ifname} (No IP)",
+        "format": "  Connected",
+        "format-disconnected": "  Disconnected",
+        "interval": 60,
+        "on-click": "nm-connection-editor"
+    },
+    "clock#time": {
+        "format": "{:%H:%M %a}",
+        // "timezone": "America/New_York",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        // START CLOCK FORMAT
+        "format-alt": "{:%d.%m.%Y}"
+        // END CLOCK FORMAT
+    },
+    "custom/power":{
+    	"format":"",
+      "on-click": "wlogout",
+    },
+    "custom/notification":{
+    	"format": "󱅫",
+    	"on-click": "swaync-client -t -sw"
+    },
+
+    "cpu": {
+        "format": "C {usage}%",
+        "on-click": "kitty -e htop"
+    },
+
+    "memory": {
+        "format": "M {}% ",
+        "on-click": "kitty -e htop"
+    },
+
+    "hyprland/language": {
+        "format": "K {short}"
+    },
+
+    "custom/crypto": {
+        "format": "{}",
+        "interval": 600,
+        "return-type": "json",
+        "exec": "waybar-crypto",
+        "exec-if": "command -v waybar-crypto",
+        "on-click": "xdg-open https://coinmarketcap.com/"
+    },
+    "tray": {
+        "icon-size": 21,
+        "spacing": 10
+    },
+
+    "custom/cava": {
+        "exec": "~/dotfiles/scripts/cava-waybar.sh",
+        "return-type": "json",
+        "escape": true,
+        "tooltip": "Audio Visualizer",
+        "on-click": "pavucontrol"
+    },
+
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{icon} {time}",
+        "format-icons": ["", "", "", "", ""]
+    }
+
+}

@@ -1,0 +1,100 @@
+# Starship configuration
+# Timeouts
+command_timeout = 1000
+scan_timeout = 30
+
+# Newline before prompt
+add_newline = true
+
+# Color palette
+palette = "material"
+
+# Prompt layout
+format = """
+$directory\
+$git_branch\
+$docker_context\
+$character"""
+
+right_format = """
+$conda\
+$python\
+$rust\
+$golang\
+$time\
+"""
+
+# --- Palette ---
+[palettes.material]
+surface = "#1e1e2e"
+primary = "#67b0e8"
+secondary = "#c47fd5"
+tertiary = "#e5c76b"
+error = "#f28fad"
+foreground = "#dadada"
+
+# --- Fill between left/right ---
+[fill]
+symbol = " "
+style = "bold fg:foreground bg:surface"
+
+# --- Prompt symbol ---
+[character]
+success_symbol = "[\\$](bold green)"
+error_symbol = "[\\$](bold error)"
+vimcmd_symbol = "[\\$](bold green)"
+
+# --- Username / Hostname ---
+[hostname]
+ssh_only = false
+format = "[$hostname]($style)"
+style = "bold tertiary"
+
+[username]
+style_user = "bold tertiary"
+style_root = "bold error"
+format = "[@$user]($style) "
+show_always = true
+
+# --- Directory ---
+[directory]
+style = "bold primary"
+truncation_length = 3
+truncate_to_repo = true
+read_only = " 󰌾"
+read_only_style = "error"
+format = "[$path]($style)[$read_only]($read_only_style) "
+home_symbol = "~"
+
+# --- Git ---
+[git_branch]
+symbol = " "
+style = "bold bright-blue"
+format = "on [$symbol$branch]($style) "
+
+[git_status]
+style = "bold bright-cyan"
+format = '([ $all_status$ahead_behind ]($style)) '
+conflicted = "⚔️ "
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?"
+stashed = "📦"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+[git_metrics]
+disabled = false
+added_style = "green"
+deleted_style = "red"
+format = '[+$added/-$deleted]($style) '
+
+[time]
+disabled = false
+format = "[ $time]($style) "
+style = "bold foreground"
+time_format = "%H:%M"
+utc_time_offset = "local"
