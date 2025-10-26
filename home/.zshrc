@@ -97,7 +97,7 @@ fi
 # =====================================================
 
 # Run neofetch only for interactive, non-SSH sessions
-if [[ -o interactive ]] && [[ -z "${SSH_CONNECTION}" ]] && command -v neofetch >/dev/null 2>&1; then
-    neofetch
+if [[ -o interactive ]] && [[ -z "${SSH_CONNECTION}" ]] && command -v fastfetch >/dev/null 2>&1; then
+    fastfetch
 fi
 
