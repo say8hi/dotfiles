@@ -297,7 +297,7 @@ toastFg: {{colors.on_surface.default.hex}};
 reportSpamBg: {{colors.surface_container.default.hex}};
 reportSpamFg: {{colors.on_surface.default.hex}};
 historyToDownShadow: #00000040;
-historyComposeAreaBg: {{colors.surface.default.hex}};
+historyComposeAreaBg: {{colors.surface_container.default.hex}};
 historyComposeAreaFg: {{colors.on_surface.default.hex}};
 historyComposeAreaFgService: {{colors.on_surface_variant.default.hex}};
 historyComposeIconFg: {{colors.on_surface_variant.default.hex}};
