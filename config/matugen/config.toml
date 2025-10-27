@@ -41,9 +41,15 @@ output_path = '~/dotfiles/config/gtk-3.0/colors.css'
 post_hook = "~/dotfiles/config/hypr/scripts/gtk.sh &"
 
 [templates.gtk4-colors]
-input_path = '~/.config/matugen/templates/gtky-4.0-colors.css'
+input_path = '~/.config/matugen/templates/gtk-4.0-colors.css'
 output_path = '~/dotfiles/config/gtk-4.0/colors.css'
 
 [templates.telegram]
 input_path = '~/.config/matugen/templates/telegram.tdesktop-theme'
 output_path = '~/.cache/telegram-material-you.tdesktop-theme'
+
+
+[templates.colors-hyprland]
+input_path = '~/.config/matugen/templates/colors-hyprland.conf' 
+output_path = '~/.cache/colors-hyprland.conf' 
+post_hook = "hyprctl reload"
