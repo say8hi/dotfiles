@@ -118,10 +118,20 @@
   animation-timing-function: linear;
 }
 
-#wireplumber {
+#wireplumber,
+#custom-power {
   color: @tertiary;
 }
 
-#network {
+#network,
+#custom-notification {
   color: @primary;
+}
+
+#custom-crypto,
+#cpu,
+#memory,
+#language,
+#clock {
+  color: @secondary;
 }
