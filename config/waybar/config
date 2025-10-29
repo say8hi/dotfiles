@@ -13,16 +13,17 @@
     "custom/crypto",
     "custom/cava"
   ],
+"modules-center": [
+    "battery",
+		"clock#time",
+    "backlight",
+],
 	"modules-right":[
 		"custom/notification",
 		"network",
 		"wireplumber",
-    "cpu",
-    "memory",
     "hyprland/language",
-    "battery",
     "tray",
-		"clock#time",
 		"custom/power"
 		],
 		
@@ -123,17 +124,22 @@
         "tooltip": "Audio Visualizer",
         "on-click": "pavucontrol"
     },
-
     "battery": {
-        "states": {
-            "warning": 30,
-            "critical": 15
-        },
-        "format": "{icon} {capacity}%",
-        "format-charging": " {capacity}%",
-        "format-plugged": " {capacity}%",
-        "format-alt": "{icon} {time}",
-        "format-icons": ["", "", "", "", ""]
-    }
+      "bat": "BATT",
+      "adapter": "ACAD",
+      "interval": 30,
+      "format": "{capacity}% ",
+      "format-charging": "{capacity}% ",
+      "format-plugged": "{capacity}% ",
+      "format-alt": "{time} {capacity}%",
+      "tooltip": true,
+      "tooltip-format": "Remaining: {time}"
+    },
+    "backlight": {
+      "device": "amdgpu_bl1",
+      "format": "{percent}% ☀️",
+        "on-scroll-up":"brightnessctl set +1%",
+        "on-scroll-down":"brightnessctl set 1%-"
+    },
 
 }
