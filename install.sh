@@ -105,6 +105,67 @@ check_arch() {
     print_success "System check passed"
 }
 
+check_yay() {
+    print_header "Checking package manager"
+
+    if command_exists yay; then
+        print_success "yay is installed"
+        return 0
+    fi
+
+    print_warning "yay AUR helper not found"
+
+    if ! ask_confirmation "Install yay? (required for AUR packages)"; then
+        print_warning "Continuing without yay - some packages may not be available"
+        return 0
+    fi
+
+    # Check if required dependencies are installed
+    if ! command_exists git; then
+        print_error "git is required to install yay"
+        if ask_confirmation "Install git with pacman?"; then
+            sudo pacman -S --needed --noconfirm git || {
+                print_error "Failed to install git"
+                return 1
+            }
+        else
+            return 1
+        fi
+    fi
+
+    if ! command_exists makepkg; then
+        if ask_confirmation "Install base-devel? (required for building AUR packages)"; then
+            sudo pacman -S --needed --noconfirm base-devel || {
+                print_error "Failed to install base-devel"
+                return 1
+            }
+        fi
+    fi
+
+    # Install yay
+    print_header "Installing yay"
+    local tmp_dir="/tmp/yay-install-$$"
+
+    if git clone https://aur.archlinux.org/yay.git "${tmp_dir}"; then
+        cd "${tmp_dir}" || return 1
+        if makepkg -si --noconfirm; then
+            print_success "yay installed successfully"
+            cd - > /dev/null || return 1
+            rm -rf "${tmp_dir}"
+            return 0
+        else
+            print_error "Failed to build yay"
+            cd - > /dev/null || return 1
+            rm -rf "${tmp_dir}"
+            return 1
+        fi
+    else
+        print_error "Failed to clone yay repository"
+        rm -rf "${tmp_dir}"
+        return 1
+    fi
+}
+
 check_dependencies() {
     print_header "Checking dependencies"
 
@@ -124,17 +185,35 @@ check_dependencies() {
     if [[ ${#missing[@]} -gt 0 ]]; then
         print_warning "Missing core dependencies: ${missing[*]}"
         echo ""
-        echo "Install all core packages with:"
-        echo "  yay -S ${CORE_PACKAGES[*]}"
-        echo ""
-        echo "Or individually:"
-        for pkg in "${missing[@]}"; do
-            echo "  yay -S ${pkg}"
-        done
-        echo ""
 
-        if ! ask_confirmation "Continue without installing dependencies?"; then
-            exit 1
+        if command_exists yay; then
+            if ask_confirmation "Install missing dependencies automatically?"; then
+                print_header "Installing dependencies"
+                if yay -S --needed --noconfirm "${missing[@]}"; then
+                    print_success "All dependencies installed successfully"
+                else
+                    print_error "Failed to install some dependencies"
+                    if ! ask_confirmation "Continue anyway?"; then
+                        exit 1
+                    fi
+                fi
+            else
+                echo "Install manually with:"
+                echo "  yay -S ${missing[*]}"
+                echo ""
+                if ! ask_confirmation "Continue without installing dependencies?"; then
+                    exit 1
+                fi
+            fi
+        else
+            print_warning "yay not found. Please install dependencies manually:"
+            for pkg in "${missing[@]}"; do
+                echo "  yay -S ${pkg}"
+            done
+            echo ""
+            if ! ask_confirmation "Continue without installing dependencies?"; then
+                exit 1
+            fi
         fi
     else
         print_success "All core dependencies installed"
@@ -148,27 +227,43 @@ backup_existing_configs() {
 
     for config in "${CONFIGS[@]}"; do
         local config_path="${CONFIG_DIR}/${config}"
-        if [[ -e "${config_path}" ]] && [[ ! -L "${config_path}" ]]; then
-            mkdir -p "${BACKUP_DIR}"
-            if mv "${config_path}" "${BACKUP_DIR}/"; then
-                print_success "Backed up ${config}"
-                backed_up=1
+        if [[ -e "${config_path}" ]] || [[ -L "${config_path}" ]]; then
+            # Backup real files/directories, remove old symlinks
+            if [[ ! -L "${config_path}" ]]; then
+                mkdir -p "${BACKUP_DIR}"
+                if mv "${config_path}" "${BACKUP_DIR}/"; then
+                    print_success "Backed up ${config}"
+                    backed_up=1
+                else
+                    print_warning "Failed to backup ${config}"
+                fi
             else
-                print_warning "Failed to backup ${config}"
+                # Remove old symlink
+                rm -f "${config_path}"
+                print_success "Removed old symlink ${config}"
             fi
         fi
     done
 
-    # Backup .zshrc
-    if [[ -f "${HOME}/.zshrc" ]] && [[ ! -L "${HOME}/.zshrc" ]]; then
-        mkdir -p "${BACKUP_DIR}"
-        if mv "${HOME}/.zshrc" "${BACKUP_DIR}/"; then
-            print_success "Backed up .zshrc"
-            backed_up=1
-        else
-            print_warning "Failed to backup .zshrc"
+    # Backup or remove home directory files
+    for file in "${HOME_FILES[@]}"; do
+        local file_path="${HOME}/${file}"
+        if [[ -e "${file_path}" ]] || [[ -L "${file_path}" ]]; then
+            if [[ ! -L "${file_path}" ]]; then
+                mkdir -p "${BACKUP_DIR}"
+                if mv "${file_path}" "${BACKUP_DIR}/"; then
+                    print_success "Backed up ${file}"
+                    backed_up=1
+                else
+                    print_warning "Failed to backup ${file}"
+                fi
+            else
+                # Remove old symlink
+                rm -f "${file_path}"
+                print_success "Removed old symlink ${file}"
+            fi
         fi
-    fi
+    done
 
     if [[ ${backed_up} -eq 1 ]]; then
         print_success "Backups saved to: ${BACKUP_DIR}"
@@ -188,8 +283,9 @@ create_symlinks() {
         local source="${DOTFILES_DIR}/config/${config}"
         local target="${CONFIG_DIR}/${config}"
 
-        if [[ -d "${source}" ]]; then
-            ln -sf "${source}" "${target}"
+        if [[ -e "${source}" ]]; then
+            # Use -n flag to prevent creating symlink inside existing directory symlink
+            ln -sfn "${source}" "${target}"
             print_success "Linked ${config}"
         else
             print_warning "Skipped ${config} (source not found)"
@@ -197,12 +293,17 @@ create_symlinks() {
     done
 
     # Home directory symlinks
-    if [[ -f "${DOTFILES_DIR}/home/.zshrc" ]]; then
-        ln -sf "${DOTFILES_DIR}/home/.zshrc" "${HOME}/.zshrc"
-        print_success "Linked .zshrc"
-    else
-        print_warning "Skipped .zshrc (source not found)"
-    fi
+    for file in "${HOME_FILES[@]}"; do
+        local source="${DOTFILES_DIR}/home/${file}"
+        local target="${HOME}/${file}"
+
+        if [[ -e "${source}" ]]; then
+            ln -sfn "${source}" "${target}"
+            print_success "Linked ${file}"
+        else
+            print_warning "Skipped ${file} (source not found)"
+        fi
+    done
 
     print_success "All symlinks created"
 }
@@ -211,23 +312,36 @@ setup_wallpaper_dir() {
     print_header "Setting up wallpaper directory"
 
     local wallpaper_dir="${HOME}/wallpaper"
-    local dotfiles_wallpaper="${DOTFILES_DIR}/wallpaper"
 
-    if [[ -d "${wallpaper_dir}" ]] && [[ ! -L "${wallpaper_dir}" ]]; then
-        print_warning "~/wallpaper already exists"
-        if ask_confirmation "Merge with dotfiles/wallpaper?"; then
-            if command_exists rsync; then
-                rsync -av "${wallpaper_dir}/" "${dotfiles_wallpaper}/" || print_warning "rsync failed"
-                rm -rf "${wallpaper_dir}"
-                ln -sf "${dotfiles_wallpaper}" "${wallpaper_dir}"
-                print_success "Merged and linked wallpaper directory"
-            else
-                print_warning "rsync not found, skipping merge"
+    # Create wallpaper directory if it doesn't exist
+    if [[ ! -d "${wallpaper_dir}" ]]; then
+        mkdir -p "${wallpaper_dir}"
+        print_success "Created ~/wallpaper directory"
+
+        # Copy default Hyprland wallpapers if available
+        if [[ -d "/usr/share/hyprland" ]]; then
+            local copied=0
+            # Try common wallpaper locations
+            for pattern in "/usr/share/hyprland/*.png" "/usr/share/hyprland/*.jpg" "/usr/share/hyprland/wall*"; do
+                for wallpaper in $pattern; do
+                    if [[ -f "${wallpaper}" ]]; then
+                        cp "${wallpaper}" "${wallpaper_dir}/"
+                        print_success "Copied $(basename "${wallpaper}")"
+                        copied=1
+                    fi
+                done
+            done
+
+            if [[ ${copied} -eq 0 ]]; then
+                print_warning "No default Hyprland wallpapers found"
+                echo "You can add your own wallpapers to ~/wallpaper"
             fi
+        else
+            print_warning "Hyprland wallpapers not found in /usr/share/hyprland"
+            echo "You can add your own wallpapers to ~/wallpaper"
         fi
     else
-        ln -sf "${dotfiles_wallpaper}" "${wallpaper_dir}"
-        print_success "Linked wallpaper directory"
+        print_success "~/wallpaper directory already exists"
     fi
 }
 
@@ -346,9 +460,9 @@ generate_initial_colors() {
         return 0
     fi
 
-    # Find a wallpaper
+    # Find a wallpaper in ~/wallpaper
     local wallpaper
-    wallpaper=$(find "${DOTFILES_DIR}/wallpaper" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | head -1)
+    wallpaper=$(find "${HOME}/wallpaper" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | head -1)
 
     if [[ -n "${wallpaper}" ]]; then
         mkdir -p "${HOME}/.cache"
@@ -356,7 +470,7 @@ generate_initial_colors() {
         matugen image "${wallpaper}" --type scheme-content || print_warning "Matugen color generation failed"
         print_success "Generated colors from wallpaper"
     else
-        print_warning "No wallpapers found, skipping color generation"
+        print_warning "No wallpapers found in ~/wallpaper, skipping color generation"
     fi
 }
 
@@ -419,6 +533,7 @@ main() {
     # Run installation steps
     check_requirements
     check_arch
+    check_yay
     check_dependencies
     backup_existing_configs
     create_symlinks
