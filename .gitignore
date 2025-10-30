@@ -9,3 +9,9 @@ lazy-lock.json
 after
 **/.DS_Store
 
+
+# Matugen generated files - never commit
+config/kitty/colors.conf
+config/gtk-3.0/colors.css
+config/gtk-4.0/colors.css
+config/swaync/style.css

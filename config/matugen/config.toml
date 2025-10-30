@@ -26,9 +26,9 @@ output_path = '~/.cache/nvim/colors.json'
 input_path = '~/.config/matugen/templates/colors-wlogout.css'
 output_path = '~/.cache/colors-wlogout.css'
 
-[templates.hyprlock]
-input_path = '~/.config/matugen/templates/hyprlock.conf'
-output_path = '~/dotfiles/config/hypr/hyprlock.conf'
+[templates.hyprlock-colors]
+input_path = '~/.config/matugen/templates/hyprlock-colors.conf'
+output_path = '~/.cache/hyprlock-colors.conf'
 
 [templates.swaync]
 input_path = '~/.config/matugen/templates/swaync-style.css'
