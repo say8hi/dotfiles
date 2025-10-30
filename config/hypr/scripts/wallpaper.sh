@@ -76,16 +76,16 @@ newwall=$(echo $wallpaper | sed "s|$HOME/wallpaper/||g")
 # -----------------------------------------------------
 ~/dotfiles/config/waybar/launch.sh
 
-# ----------------------------------------------------- 
+# -----------------------------------------------------
 # Set the new wallpaper
 # -----------------------------------------------------
-transition_type="wipe"
-# transition_type="outer"
-# transition_type="random"
+# Random transition type for swww
+transition_types=("simple" "fade" "left" "right" "top" "bottom" "wipe" "wave" "grow" "center" "outer")
+transition_type="${transition_types[$RANDOM % ${#transition_types[@]}]}"
 
 if [ "$WALLPAPER_ENGINE" == "swww" ] ;then
     # swww
-    echo ":: Using swww"
+    echo ":: Using swww with transition: $transition_type"
     swww img $wallpaper \
         --transition-bezier .43,1.19,1,.4 \
         --transition-fps=60 \
@@ -115,21 +115,19 @@ if [ "$1" == "init" ] ;then
     echo ":: Init"
 else
     sleep 1
-    dunstify "Changing wallpaper ..." "with image $newwall" -h int:value:25 -h string:x-dunst-stack-tag:wallpaper
-    
-    # ----------------------------------------------------- 
+    notify-send "Wallpaper" "Applying $newwall..." -h int:value:10 -h string:x-canonical-private-synchronous:wallpaper
+
+    # -----------------------------------------------------
     # Reload Hyprctl.sh
     # -----------------------------------------------------
     $HOME/.config/ml4w-hyprland-settings/hyprctl.sh &
 fi
 
-# ----------------------------------------------------- 
+# -----------------------------------------------------
 # Created blurred wallpaper
 # -----------------------------------------------------
-if [ "$1" == "init" ] ;then
-    echo ":: Init"
-else
-    dunstify "Creating blurred version ..." "with image $newwall" -h int:value:50 -h string:x-dunst-stack-tag:wallpaper
+if [ "$1" != "init" ] ;then
+    notify-send "Wallpaper" "Processing..." -h int:value:40 -h string:x-canonical-private-synchronous:wallpaper
 fi
 
 magick $wallpaper -resize 75% $blurred
@@ -139,31 +137,30 @@ if [ ! "$blur" == "0x0" ] ;then
     echo ":: Blurred"
 fi
 
-# ----------------------------------------------------- 
+# -----------------------------------------------------
 # Created quare wallpaper
 # -----------------------------------------------------
-if [ "$1" == "init" ] ;then
-    echo ":: Init"
-else
-    dunstify "Creating square version ..." "with image $newwall" -h int:value:75 -h string:x-dunst-stack-tag:wallpaper
+if [ "$1" != "init" ] ;then
+    notify-send "Wallpaper" "Finalizing..." -h int:value:75 -h string:x-canonical-private-synchronous:wallpaper
 fi
+
 magick $wallpaper -gravity Center -extent 1:1 $square
 echo ":: Square version created"
 
-# ----------------------------------------------------- 
+# -----------------------------------------------------
 # Write selected wallpaper into .cache files
-# ----------------------------------------------------- 
+# -----------------------------------------------------
 echo "$wallpaper" > "$cache_file"
 echo "* { current-image: url(\"$blurred\", height); }" > "$rasi_file"
 
-# ----------------------------------------------------- 
+# -----------------------------------------------------
 # Send notification
-# ----------------------------------------------------- 
+# -----------------------------------------------------
 
 if [ "$1" == "init" ] ;then
     echo ":: Init"
 else
-    dunstify "Wallpaper procedure complete!" "with image $newwall" -h int:value:100 -h string:x-dunst-stack-tag:wallpaper
+    notify-send "Wallpaper" "Applied $newwall" -h int:value:100 -h string:x-canonical-private-synchronous:wallpaper
 fi
 
 # -----------------------------------------------------
