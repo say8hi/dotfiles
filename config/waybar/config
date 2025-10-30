@@ -22,6 +22,8 @@
 		"custom/notification",
 		"network",
 		"wireplumber",
+    "cpu",
+    "memory",
     "hyprland/language",
     "tray",
 		"custom/power"

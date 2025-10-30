@@ -24,10 +24,15 @@ fi
 CONFIG_FILE="$HOME/dotfiles/config/waybar/config"
 
 if [ "$HAS_BATTERY" = false ]; then
-    # Remove battery from modules-right for desktop
-    sed 's/"battery",//g' "$CONFIG_FILE" > /tmp/waybar-config-temp.json
+    # Desktop: remove laptop modules, keep desktop modules
+    sed -e 's/"battery",//g' \
+        -e 's/"backlight",//g' \
+        "$CONFIG_FILE" > /tmp/waybar-config-temp.json
     waybar -c /tmp/waybar-config-temp.json -s ~/dotfiles/config/waybar/style.css &
 else
-    # Use config as-is for laptop
-    waybar -c "$CONFIG_FILE" -s ~/dotfiles/config/waybar/style.css &
+    # Laptop: remove desktop modules, keep laptop modules
+    sed -e 's/"cpu",//g' \
+        -e 's/"memory",//g' \
+        "$CONFIG_FILE" > /tmp/waybar-config-temp.json
+    waybar -c /tmp/waybar-config-temp.json -s ~/dotfiles/config/waybar/style.css &
 fi
