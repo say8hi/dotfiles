@@ -308,6 +308,27 @@ create_symlinks() {
     print_success "All symlinks created"
 }
 
+setup_local_config() {
+    print_header "Setting up device-specific configuration"
+
+    local local_conf="${CONFIG_DIR}/hypr/conf/local.conf"
+    local example_conf="${CONFIG_DIR}/hypr/conf/local.conf.example"
+
+    if [[ ! -f "${local_conf}" ]]; then
+        if [[ -f "${example_conf}" ]]; then
+            mv "${example_conf}" "${local_conf}"
+            print_success "Created local.conf from example"
+            print_warning "Edit ~/.config/hypr/conf/local.conf to customize:"
+            echo "  • Add COINMARKETCAP_API_KEY for waybar-crypto"
+            echo "  • Uncomment hyprsplit config for desktop setup"
+        else
+            print_warning "local.conf.example not found, skipping"
+        fi
+    else
+        print_success "local.conf already exists"
+    fi
+}
+
 setup_wallpaper_dir() {
     print_header "Setting up wallpaper directory"
 
@@ -537,6 +558,7 @@ main() {
     check_dependencies
     backup_existing_configs
     create_symlinks
+    setup_local_config
     setup_wallpaper_dir
     setup_sddm
     install_shell_plugins
