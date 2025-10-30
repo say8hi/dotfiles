@@ -124,28 +124,53 @@ else
 fi
 
 # -----------------------------------------------------
-# Created blurred wallpaper
+# Create blurred and square wallpapers (optimized with caching)
 # -----------------------------------------------------
 if [ "$1" != "init" ] ;then
     notify-send "Wallpaper" "Processing..." -h int:value:40 -h string:x-canonical-private-synchronous:wallpaper
 fi
 
-magick $wallpaper -resize 75% $blurred
-echo ":: Resized to 75%"
-if [ ! "$blur" == "0x0" ] ;then
-    magick $blurred -blur $blur $blurred
-    echo ":: Blurred"
+# Generate hash for caching
+wallpaper_hash=$(md5sum "$wallpaper" | cut -d' ' -f1)
+cached_blur="$HOME/.cache/wallpaper_blur_${wallpaper_hash}.png"
+cached_square="$HOME/.cache/wallpaper_square_${wallpaper_hash}.png"
+
+# Check if cached versions exist
+if [[ -f "$cached_blur" && -f "$cached_square" ]]; then
+    echo ":: Using cached versions"
+    cp "$cached_blur" "$blurred"
+    cp "$cached_square" "$square"
+else
+    echo ":: Generating new versions"
+
+    # Run imagemagick operations in parallel with optimized settings
+    {
+        if [ ! "$blur" == "0x0" ] ;then
+            magick "$wallpaper" -filter box -quality 85 -resize 75% -blur $blur "$blurred"
+            echo ":: Created blurred version"
+        else
+            magick "$wallpaper" -filter box -quality 85 -resize 75% "$blurred"
+            echo ":: Created resized version"
+        fi
+        # Cache the result
+        cp "$blurred" "$cached_blur"
+    } &
+
+    {
+        magick "$wallpaper" -filter box -quality 85 -gravity Center -extent 1:1 "$square"
+        echo ":: Created square version"
+        # Cache the result
+        cp "$square" "$cached_square"
+    } &
+
+    # Wait for both operations to complete
+    wait
+    echo ":: Image processing complete"
 fi
 
-# -----------------------------------------------------
-# Created quare wallpaper
-# -----------------------------------------------------
 if [ "$1" != "init" ] ;then
     notify-send "Wallpaper" "Finalizing..." -h int:value:75 -h string:x-canonical-private-synchronous:wallpaper
 fi
-
-magick $wallpaper -gravity Center -extent 1:1 $square
-echo ":: Square version created"
 
 # -----------------------------------------------------
 # Write selected wallpaper into .cache files
@@ -164,34 +189,35 @@ else
 fi
 
 # -----------------------------------------------------
-# Set SDDM wallpaper
+# Set SDDM wallpaper (async - runs in background)
 # -----------------------------------------------------
 if [ "$1" == "init" ] ;then
     echo ":: Skipping SDDM wallpaper update on init"
 else
-    echo ":: Setting SDDM wallpaper"
+    {
+        echo ":: Setting SDDM wallpaper (background)"
 
-    # Create SDDM config directory if it doesn't exist
-    if [ ! -d /etc/sddm.conf.d/ ]; then
-        sudo mkdir -p /etc/sddm.conf.d
-        echo ":: Created /etc/sddm.conf.d directory"
-    fi
+        # Create SDDM config directory if it doesn't exist
+        if [ ! -d /etc/sddm.conf.d/ ]; then
+            sudo mkdir -p /etc/sddm.conf.d 2>/dev/null
+        fi
 
-    # Copy SDDM config
-    sudo cp $HOME/dotfiles/config/sddm/sddm.conf /etc/sddm.conf.d/
-    echo ":: Updated /etc/sddm.conf.d/sddm.conf"
+        # Copy SDDM config
+        sudo cp "$HOME/dotfiles/config/sddm/sddm.conf" /etc/sddm.conf.d/ 2>/dev/null
 
-    # Get file extension
-    extension="${wallpaper##*.}"
+        # Get file extension
+        extension="${wallpaper##*.}"
 
-    # Copy current wallpaper to SDDM theme
-    sudo cp $wallpaper /usr/share/sddm/themes/silent/Backgrounds/current_wallpaper.$extension
-    echo ":: Copied wallpaper to SDDM theme"
+        # Copy current wallpaper to SDDM theme
+        sudo cp "$wallpaper" /usr/share/sddm/themes/silent/Backgrounds/current_wallpaper.$extension 2>/dev/null
 
-    # Update theme.conf
-    sudo cp $HOME/dotfiles/config/sddm/theme.conf /usr/share/sddm/themes/silent/
-    sudo sed -i 's/CURRENTWALLPAPER/'"current_wallpaper.$extension"'/' /usr/share/sddm/themes/silent/theme.conf
-    echo ":: Updated SDDM theme.conf"
+        # Update theme.conf
+        sudo cp "$HOME/dotfiles/config/sddm/theme.conf" /usr/share/sddm/themes/silent/ 2>/dev/null
+        sudo sed -i 's/CURRENTWALLPAPER/'"current_wallpaper.$extension"'/' /usr/share/sddm/themes/silent/theme.conf 2>/dev/null
+
+        echo ":: SDDM wallpaper updated"
+    } &
+    disown
 fi
 
 echo "DONE!"
