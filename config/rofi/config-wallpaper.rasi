@@ -42,6 +42,11 @@ listview {
     lines: 3;
     scrollbar: true;
     spacing: 10px;
+    cycle: false;
+    fixed-height: true;
+    fixed-columns: true;
+    flow: horizontal;
+    layout: vertical;
 }
 
 element {

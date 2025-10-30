@@ -41,7 +41,7 @@ case $1 in
     # Select wallpaper with rofi
     "select")
         sleep 0.2
-        selected=$( find "$HOME/wallpaper" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) -exec basename {} \; | sort -R | while read rfile
+        selected=$( find "$HOME/wallpaper" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) -exec basename {} \; | sort -V | while read rfile
         do
             echo -en "$rfile\x00icon\x1f$HOME/wallpaper/${rfile}\n"
         done | rofi -dmenu -i -replace -config ~/dotfiles/config/rofi/config-wallpaper.rasi)
