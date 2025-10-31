@@ -1,6 +1,6 @@
 /*
  * Wallpaper selector
- * 761px wide, grid layout (6x3), icon-only
+ * Centered, large previews, 5 items, horizontal scroll
  */
 
 configuration {
@@ -19,11 +19,11 @@ configuration {
 @import "~/dotfiles/config/rofi/common.rasi"
 
 window {
-    width: 761px;
+    width: 1400px;
     x-offset: 0px;
-    y-offset: 65px;
-    location: north;
-    anchor: north;
+    y-offset: 0px;
+    location: center;
+    anchor: center;
 }
 
 mainbox {
@@ -38,10 +38,10 @@ listbox {
 }
 
 listview {
-    columns: 6;
-    lines: 3;
-    scrollbar: true;
-    spacing: 10px;
+    columns: 5;
+    lines: 1;
+    scrollbar: false;
+    spacing: 20px;
     cycle: false;
     fixed-height: true;
     fixed-columns: true;
@@ -67,7 +67,7 @@ element alternate.normal {
 }
 
 element-icon {
-    size: 100px;
+    size: 240px;
     horizontal-align: 0.5;
 }
 
