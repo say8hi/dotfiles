@@ -29,9 +29,9 @@ local util = require "lspconfig.util"
 
 -- GOPLS
 vim.lsp.config.gopls = {
-  cmd = { "gopls" },
-  filetypes = { "go", "gomod", "gowork", "gotmpl" },
-  root_markers = { "go.work", "go.mod", ".git" },
+  cmd = {"gopls"},
+  filetypes = {"go", "gomod", "gowork", "gotmpl"},
+  root_markers = {"go.work", "go.mod", ".git"},
   settings = {
     gopls = {
       codelenses = {
@@ -62,25 +62,25 @@ vim.lsp.config.gopls = {
         shadow = true,
         nilness = true,
         unusedwrite = true,
-      },
-    },
-  },
+      }
+    }
+  }
 }
 
-vim.lsp.enable "gopls"
+vim.lsp.enable('gopls')
 
 -- RUFF LSP
 vim.lsp.config.ruff = {
-  cmd = { "ruff", "server" },
-  filetypes = { "python" },
-  root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git" },
+  cmd = {"ruff", "server"},
+  filetypes = {"python"},
+  root_markers = {"pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git"},
 }
 
 -- PYRIGHT
 vim.lsp.config.pyright = {
-  cmd = { "pyright-langserver", "--stdio" },
-  filetypes = { "python" },
-  root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git" },
+  cmd = {"pyright-langserver", "--stdio"},
+  filetypes = {"python"},
+  root_markers = {"pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git"},
   settings = {
     pyright = {
       disableOrganizeImports = true,
@@ -106,23 +106,23 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-vim.lsp.enable "ruff"
-vim.lsp.enable "pyright"
+vim.lsp.enable('ruff')
+vim.lsp.enable('pyright')
 
 -- JSON
 vim.lsp.config.jsonls = {
-  cmd = { "vscode-json-language-server", "--stdio" },
-  filetypes = { "json", "jsonc" },
-  root_markers = { ".git" },
+  cmd = {"vscode-json-language-server", "--stdio"},
+  filetypes = {"json", "jsonc"},
+  root_markers = {".git"},
 }
 
-vim.lsp.enable "jsonls"
+vim.lsp.enable('jsonls')
 
 -- TypeScript/JavaScript
 vim.lsp.config.ts_ls = {
-  cmd = { "typescript-language-server", "--stdio" },
-  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
-  root_markers = { "package.json", "tsconfig.json", "jsconfig.json", ".git" },
+  cmd = {"typescript-language-server", "--stdio"},
+  filetypes = {"javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx"},
+  root_markers = {"package.json", "tsconfig.json", "jsconfig.json", ".git"},
   settings = {
     typescript = {
       inlayHints = {
@@ -149,25 +149,25 @@ vim.lsp.config.ts_ls = {
   },
 }
 
-vim.lsp.enable "ts_ls"
+vim.lsp.enable('ts_ls')
 
 -- HTML
 vim.lsp.config.html = {
-  cmd = { "vscode-html-language-server", "--stdio" },
-  filetypes = { "html" },
-  root_markers = { ".git" },
+  cmd = {"vscode-html-language-server", "--stdio"},
+  filetypes = {"html"},
+  root_markers = {".git"},
 }
 
-vim.lsp.enable "html"
+vim.lsp.enable('html')
 
 -- CSS
 vim.lsp.config.cssls = {
-  cmd = { "vscode-css-language-server", "--stdio" },
-  filetypes = { "css", "scss", "less" },
-  root_markers = { ".git" },
+  cmd = {"vscode-css-language-server", "--stdio"},
+  filetypes = {"css", "scss", "less"},
+  root_markers = {".git"},
 }
 
-vim.lsp.enable "cssls"
+vim.lsp.enable('cssls')
 
 -- SQL
 -- sqls is not installed, uncomment when needed
@@ -192,4 +192,4 @@ vim.lsp.enable "cssls"
 --   },
 -- }
 --
--- vim.lsp.enable('sqls')
+-- vim.lsp.enable('sqls') 

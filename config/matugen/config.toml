@@ -18,9 +18,9 @@ output_path = '~/.cache/colors-waybar.css'
 input_path = '~/.config/matugen/templates/colors-rofi.rasi'
 output_path = '~/.cache/colors-rofi.rasi'
 
-[templates.nvim]
-input_path = '~/.config/matugen/templates/nvim-colors.json'
-output_path = '~/.cache/nvim/colors.json'
+[templates.nvim-theme]
+input_path = '~/.config/matugen/templates/nvim-theme.lua'
+output_path = '~/.local/share/nvim/lazy/base46/lua/base46/themes/matugen.lua'
 
 [templates.wlogout]
 input_path = '~/.config/matugen/templates/colors-wlogout.css'

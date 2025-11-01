@@ -43,3 +43,6 @@ alias hypr-restart='killall waybar && ${HOME}/dotfiles/waybar/launch.sh &'
 alias dcup='docker-compose up -d --build'
 alias dcdn='docker-compose down'
 alias dclg='docker-compose logs -f'
+
+# nvim
+alias v='nvim'
