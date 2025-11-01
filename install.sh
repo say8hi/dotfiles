@@ -473,6 +473,143 @@ install_shell_plugins() {
     fi
 }
 
+install_optional_components() {
+    print_header "Optional components installation"
+
+    echo ""
+    echo "The following components are optional and can enhance your workflow:"
+    echo ""
+
+    # Miniconda
+    if [[ ! -d "/opt/miniconda3" ]] && [[ ! -f "${HOME}/miniconda3/bin/conda" ]]; then
+        if ask_confirmation "Install Miniconda? (Python package manager)"; then
+            print_header "Installing Miniconda"
+            local tmp_dir="/tmp/miniconda-install-$$"
+            mkdir -p "${tmp_dir}"
+
+            # Download Miniconda installer
+            if curl -L -o "${tmp_dir}/miniconda.sh" https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh; then
+                chmod +x "${tmp_dir}/miniconda.sh"
+
+                # Ask for installation location
+                echo ""
+                echo "Choose installation location:"
+                echo "  1) /opt/miniconda3 (system-wide, requires sudo)"
+                echo "  2) ~/miniconda3 (user-local)"
+                read -rp "$(echo -e "${YELLOW}?${NC}") Select location (1/2): " conda_location
+
+                if [[ "${conda_location}" == "1" ]]; then
+                    sudo bash "${tmp_dir}/miniconda.sh" -b -p /opt/miniconda3 && {
+                        sudo chown -R "${USER}:${USER}" /opt/miniconda3
+                        print_success "Miniconda installed to /opt/miniconda3"
+                    } || {
+                        print_error "Miniconda installation failed"
+                    }
+                else
+                    bash "${tmp_dir}/miniconda.sh" -b -p "${HOME}/miniconda3" && {
+                        print_success "Miniconda installed to ~/miniconda3"
+                        # Update conda.zsh to use home directory
+                        print_warning "Note: conda.zsh expects /opt/miniconda3, you may need to edit it"
+                    } || {
+                        print_error "Miniconda installation failed"
+                    }
+                fi
+
+                rm -rf "${tmp_dir}"
+            else
+                print_error "Failed to download Miniconda installer"
+                rm -rf "${tmp_dir}"
+            fi
+        fi
+    else
+        print_success "Miniconda already installed"
+    fi
+
+    # Rust/Cargo
+    if ! command_exists cargo; then
+        if ask_confirmation "Install Rust? (rustup toolchain)"; then
+            print_header "Installing Rust"
+            if curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; then
+                print_success "Rust installed successfully"
+                print_warning "Restart your shell or source ~/.cargo/env to use cargo"
+            else
+                print_error "Rust installation failed"
+            fi
+        fi
+    else
+        print_success "Rust already installed"
+    fi
+
+    # Go
+    if ! command_exists go; then
+        if ask_confirmation "Install Go? (yay -S go)"; then
+            if command_exists yay; then
+                yay -S --noconfirm go && {
+                    print_success "Go installed successfully"
+                } || {
+                    print_error "Go installation failed"
+                }
+            else
+                print_warning "yay not found, please install Go manually: yay -S go"
+            fi
+        fi
+    else
+        print_success "Go already installed"
+    fi
+
+    # Docker
+    if ! command_exists docker; then
+        if ask_confirmation "Install Docker? (yay -S docker docker-compose)"; then
+            if command_exists yay; then
+                yay -S --noconfirm docker docker-compose && {
+                    print_success "Docker installed successfully"
+                    if ask_confirmation "Add current user to docker group?"; then
+                        sudo usermod -aG docker "${USER}" && {
+                            print_success "User added to docker group"
+                            print_warning "Logout and login again for group changes to take effect"
+                        } || {
+                            print_error "Failed to add user to docker group"
+                        }
+                    fi
+                    if ask_confirmation "Enable Docker service?"; then
+                        sudo systemctl enable docker && {
+                            print_success "Docker service enabled"
+                        } || {
+                            print_error "Failed to enable Docker service"
+                        }
+                    fi
+                } || {
+                    print_error "Docker installation failed"
+                }
+            else
+                print_warning "yay not found, please install Docker manually: yay -S docker docker-compose"
+            fi
+        fi
+    else
+        print_success "Docker already installed"
+    fi
+
+    # Node.js/npm
+    if ! command_exists node; then
+        if ask_confirmation "Install Node.js? (yay -S nodejs npm)"; then
+            if command_exists yay; then
+                yay -S --noconfirm nodejs npm && {
+                    print_success "Node.js installed successfully"
+                } || {
+                    print_error "Node.js installation failed"
+                }
+            else
+                print_warning "yay not found, please install Node.js manually: yay -S nodejs npm"
+            fi
+        fi
+    else
+        print_success "Node.js already installed"
+    fi
+
+    echo ""
+    print_success "Optional components setup complete"
+}
+
 generate_initial_colors() {
     print_header "Generating initial color scheme"
 
@@ -540,7 +677,8 @@ main() {
     echo "  • Backup existing configs to ${BACKUP_DIR}"
     echo "  • Create symlinks from ${DOTFILES_DIR} to ~/.config/"
     echo "  • Set up SDDM (optional)"
-    echo "  • Install starship and zsh plugins (optional)"
+    echo "  • Install shell plugins (optional)"
+    echo "  • Install optional components: Miniconda, Rust, Go, Docker, Node.js (optional)"
     echo "  • Generate initial color scheme"
     echo ""
     echo "Installation log: ${LOG_FILE}"
@@ -562,6 +700,7 @@ main() {
     setup_wallpaper_dir
     setup_sddm
     install_shell_plugins
+    install_optional_components
     generate_initial_colors
     set_default_shell
 
