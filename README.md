@@ -54,10 +54,13 @@ Note: Wallpapers are stored in ~/wallpaper (created during installation)
 Colors are automatically generated from wallpaper using Matugen and applied to:
 
 - Terminal (Kitty)
-- Editor (Neovim)
+- Editor (Neovim with auto-reload)
 - Launcher (Rofi)
 - Status bar (Waybar)
+- Notification center (SwayNC)
 - Login screen (SDDM)
+
+Neovim theme automatically reloads when wallpaper changes using file watcher - no restart needed.
 
 ### Environment Variables
 
@@ -177,10 +180,12 @@ ln -sf ~/dotfiles/home/.zshrc ~/.zshrc
 
 Changing wallpaper automatically:
 
-1. Updates all color schemes via Matugen
-2. Reloads Waybar
-3. Sets SDDM background
-4. Updates terminal colors
+1. Generates Material You color scheme via Matugen
+2. Updates Neovim theme (auto-reloads in all instances)
+3. Reloads Waybar
+4. Sets SDDM background
+5. Updates terminal colors
+6. Applies colors to GTK applications
 
 ## Contributing
 
