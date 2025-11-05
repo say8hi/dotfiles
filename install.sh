@@ -15,6 +15,10 @@ readonly CONFIG_DIR="${HOME}/.config"
 readonly LOG_FILE="${DOTFILES_DIR}/install.log"
 
 # Load package lists
+if [[ ! -f "${DOTFILES_DIR}/lib/packages.conf" ]]; then
+    echo -e "${RED}✗${NC} lib/packages.conf not found in ${DOTFILES_DIR}"
+    exit 1
+fi
 source "${DOTFILES_DIR}/lib/packages.conf"
 
 # Colors for output
@@ -144,18 +148,26 @@ check_yay() {
 
     # Install yay
     print_header "Installing yay"
-    local tmp_dir="/tmp/yay-install-$$"
+    local tmp_dir
+    tmp_dir=$(mktemp -d) || {
+        print_error "Failed to create temporary directory"
+        return 1
+    }
+    local original_dir="${PWD}"
 
     if git clone https://aur.archlinux.org/yay.git "${tmp_dir}"; then
-        cd "${tmp_dir}" || return 1
+        cd "${tmp_dir}" || {
+            rm -rf "${tmp_dir}"
+            return 1
+        }
         if makepkg -si --noconfirm; then
             print_success "yay installed successfully"
-            cd - > /dev/null || return 1
+            cd "${original_dir}" || true
             rm -rf "${tmp_dir}"
             return 0
         else
             print_error "Failed to build yay"
-            cd - > /dev/null || return 1
+            cd "${original_dir}" || true
             rm -rf "${tmp_dir}"
             return 1
         fi
@@ -343,15 +355,15 @@ setup_wallpaper_dir() {
         if [[ -d "/usr/share/hyprland" ]]; then
             local copied=0
             # Try common wallpaper locations
-            for pattern in "/usr/share/hyprland/*.png" "/usr/share/hyprland/*.jpg" "/usr/share/hyprland/wall*"; do
-                for wallpaper in $pattern; do
-                    if [[ -f "${wallpaper}" ]]; then
-                        cp "${wallpaper}" "${wallpaper_dir}/"
-                        print_success "Copied $(basename "${wallpaper}")"
-                        copied=1
-                    fi
-                done
+            shopt -s nullglob
+            for wallpaper in /usr/share/hyprland/*.png /usr/share/hyprland/*.jpg /usr/share/hyprland/wall*; do
+                if [[ -f "${wallpaper}" ]]; then
+                    cp "${wallpaper}" "${wallpaper_dir}/"
+                    print_success "Copied $(basename "${wallpaper}")"
+                    copied=1
+                fi
             done
+            shopt -u nullglob
 
             if [[ ${copied} -eq 0 ]]; then
                 print_warning "No default Hyprland wallpapers found"
@@ -484,8 +496,11 @@ install_optional_components() {
     if [[ ! -d "/opt/miniconda3" ]] && [[ ! -f "${HOME}/miniconda3/bin/conda" ]]; then
         if ask_confirmation "Install Miniconda? (Python package manager)"; then
             print_header "Installing Miniconda"
-            local tmp_dir="/tmp/miniconda-install-$$"
-            mkdir -p "${tmp_dir}"
+            local tmp_dir
+            tmp_dir=$(mktemp -d) || {
+                print_error "Failed to create temporary directory"
+                return 1
+            }
 
             # Download Miniconda installer
             if curl -L -o "${tmp_dir}/miniconda.sh" https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh; then
@@ -499,20 +514,21 @@ install_optional_components() {
                 read -rp "$(echo -e "${YELLOW}?${NC}") Select location (1/2): " conda_location
 
                 if [[ "${conda_location}" == "1" ]]; then
-                    sudo bash "${tmp_dir}/miniconda.sh" -b -p /opt/miniconda3 && {
+                    if sudo bash "${tmp_dir}/miniconda.sh" -b -p /opt/miniconda3; then
                         sudo chown -R "${USER}:${USER}" /opt/miniconda3
                         print_success "Miniconda installed to /opt/miniconda3"
-                    } || {
+                    else
                         print_error "Miniconda installation failed"
-                    }
-                else
-                    bash "${tmp_dir}/miniconda.sh" -b -p "${HOME}/miniconda3" && {
+                    fi
+                elif [[ "${conda_location}" == "2" ]]; then
+                    if bash "${tmp_dir}/miniconda.sh" -b -p "${HOME}/miniconda3"; then
                         print_success "Miniconda installed to ~/miniconda3"
-                        # Update conda.zsh to use home directory
                         print_warning "Note: conda.zsh expects /opt/miniconda3, you may need to edit it"
-                    } || {
+                    else
                         print_error "Miniconda installation failed"
-                    }
+                    fi
+                else
+                    print_warning "Invalid selection, skipping Miniconda installation"
                 fi
 
                 rm -rf "${tmp_dir}"
