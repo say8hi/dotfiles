@@ -18,3 +18,11 @@ config/swaync/style.css
 
 # Device-specific configuration - never commit
 config/hypr/conf/local.conf
+
+# Auto-generated files - never commit
+config/gtk-3.0/bookmarks
+config/hypr/hyprpaper.conf
+
+# Project-specific files - never commit
+CLAUDE.md
+config/nvim/CLAUDE.md

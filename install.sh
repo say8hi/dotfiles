@@ -648,6 +648,17 @@ generate_initial_colors() {
     fi
 }
 
+generate_gtk_bookmarks() {
+    print_header "Generating GTK bookmarks"
+
+    if [[ -f "${DOTFILES_DIR}/scripts/generate-bookmarks.sh" ]]; then
+        bash "${DOTFILES_DIR}/scripts/generate-bookmarks.sh" || print_warning "Failed to generate bookmarks"
+        print_success "GTK bookmarks generated"
+    else
+        print_warning "generate-bookmarks.sh not found, skipping"
+    fi
+}
+
 set_default_shell() {
     print_header "Setting default shell"
 
@@ -718,6 +729,7 @@ main() {
     install_shell_plugins
     install_optional_components
     generate_initial_colors
+    generate_gtk_bookmarks
     set_default_shell
 
     # Done
