@@ -345,36 +345,80 @@ setup_wallpaper_dir() {
     print_header "Setting up wallpaper directory"
 
     local wallpaper_dir="${HOME}/wallpaper"
+    mkdir -p "${wallpaper_dir}"
 
-    # Create wallpaper directory if it doesn't exist
-    if [[ ! -d "${wallpaper_dir}" ]]; then
-        mkdir -p "${wallpaper_dir}"
-        print_success "Created ~/wallpaper directory"
+    # Check if wallpapers already exist
+    local existing_count
+    existing_count=$(find "${wallpaper_dir}" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | wc -l)
 
-        # Copy default Hyprland wallpapers if available
-        if [[ -d "/usr/share/hyprland" ]]; then
-            local copied=0
-            # Try common wallpaper locations
-            shopt -s nullglob
-            for wallpaper in /usr/share/hyprland/*.png /usr/share/hyprland/*.jpg /usr/share/hyprland/wall*; do
-                if [[ -f "${wallpaper}" ]]; then
-                    cp "${wallpaper}" "${wallpaper_dir}/"
-                    print_success "Copied $(basename "${wallpaper}")"
+    if [[ ${existing_count} -gt 0 ]]; then
+        print_success "~/wallpaper directory contains ${existing_count} wallpaper(s)"
+        return 0
+    fi
+
+    print_success "Created ~/wallpaper directory"
+    local copied=0
+
+    # Try to copy from Hyprland
+    if [[ -d "/usr/share/hyprland" ]]; then
+        shopt -s nullglob
+        for wallpaper in /usr/share/hyprland/*.png /usr/share/hyprland/*.jpg /usr/share/hyprland/wall*; do
+            if [[ -f "${wallpaper}" ]]; then
+                if cp "${wallpaper}" "${wallpaper_dir}/" 2>/dev/null; then
+                    print_success "Copied $(basename "${wallpaper}") from Hyprland"
                     copied=1
                 fi
-            done
-            shopt -u nullglob
-
-            if [[ ${copied} -eq 0 ]]; then
-                print_warning "No default Hyprland wallpapers found"
-                echo "You can add your own wallpapers to ~/wallpaper"
             fi
-        else
-            print_warning "Hyprland wallpapers not found in /usr/share/hyprland"
-            echo "You can add your own wallpapers to ~/wallpaper"
+        done
+        shopt -u nullglob
+    fi
+
+    # Try system backgrounds if nothing copied yet
+    if [[ ${copied} -eq 0 ]] && [[ -d "/usr/share/backgrounds" ]]; then
+        shopt -s nullglob
+        for wallpaper in /usr/share/backgrounds/*.png /usr/share/backgrounds/*.jpg; do
+            if [[ -f "${wallpaper}" ]]; then
+                if cp "${wallpaper}" "${wallpaper_dir}/" 2>/dev/null; then
+                    print_success "Copied $(basename "${wallpaper}") from system backgrounds"
+                    copied=1
+                    break
+                fi
+            fi
+        done
+        shopt -u nullglob
+    fi
+
+    # Download default wallpaper if nothing was copied
+    if [[ ${copied} -eq 0 ]]; then
+        print_warning "No local wallpapers found, downloading default wallpaper..."
+        if command_exists curl; then
+            # Download a simple default wallpaper (Hyprland's default from GitHub)
+            if curl -L -o "${wallpaper_dir}/default.png" \
+                "https://raw.githubusercontent.com/hyprwm/Hyprland/main/assets/wall_8K.png" 2>/dev/null; then
+                print_success "Downloaded default wallpaper"
+                copied=1
+            else
+                print_warning "Failed to download default wallpaper"
+            fi
+        elif command_exists wget; then
+            if wget -q -O "${wallpaper_dir}/default.png" \
+                "https://raw.githubusercontent.com/hyprwm/Hyprland/main/assets/wall_8K.png" 2>/dev/null; then
+                print_success "Downloaded default wallpaper"
+                copied=1
+            else
+                print_warning "Failed to download default wallpaper"
+            fi
         fi
-    else
-        print_success "~/wallpaper directory already exists"
+    fi
+
+    # Final check
+    if [[ ${copied} -eq 0 ]]; then
+        print_error "No wallpapers available in ~/wallpaper"
+        print_warning "Please manually add at least one wallpaper (PNG or JPG) to ~/wallpaper"
+        print_warning "This is required for color scheme generation"
+        if ! ask_confirmation "Continue installation without wallpaper?"; then
+            error_exit "Installation cancelled - wallpaper required"
+        fi
     fi
 }
 
