@@ -94,12 +94,12 @@
 
     "cpu": {
         "format": "C {usage}%",
-        "on-click": "kitty -e htop"
+        "on-click": "kitty -e btop"
     },
 
     "memory": {
         "format": "M {}% ",
-        "on-click": "kitty -e htop"
+        "on-click": "kitty -e btop"
     },
 
     "hyprland/language": {

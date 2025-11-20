@@ -15,6 +15,7 @@ config/kitty/colors.conf
 config/gtk-3.0/colors.css
 config/gtk-4.0/colors.css
 config/swaync/style.css
+config/btop/themes/matugen.theme
 
 # Device-specific configuration - never commit
 config/hypr/conf/local.conf

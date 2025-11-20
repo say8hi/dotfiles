@@ -50,6 +50,10 @@ output_path = '~/.cache/telegram-material-you.tdesktop-theme'
 
 
 [templates.colors-hyprland]
-input_path = '~/.config/matugen/templates/colors-hyprland.conf' 
-output_path = '~/.cache/colors-hyprland.conf' 
+input_path = '~/.config/matugen/templates/colors-hyprland.conf'
+output_path = '~/.cache/colors-hyprland.conf'
 post_hook = "hyprctl reload"
+
+[templates.btop]
+input_path = '~/.config/matugen/templates/btop.theme'
+output_path = '~/dotfiles/config/btop/themes/matugen.theme'
