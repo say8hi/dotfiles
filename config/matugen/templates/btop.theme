@@ -46,39 +46,39 @@ theme[temp_mid]="{{colors.secondary.default.hex}}"
 theme[temp_end]="{{colors.error.default.hex}}"
 
 # CPU graph colors (Primary gradient)
-theme[cpu_start]="{{colors.primary.default.hex | set_lightness: 10.0}}"
+theme[cpu_start]="{{colors.primary.default.hex | lighten: 10.0}}"
 theme[cpu_mid]="{{colors.primary.default.hex}}"
-theme[cpu_end]="{{colors.primary.default.hex | set_lightness: -10.0}}"
+theme[cpu_end]="{{colors.primary.default.hex | lighten: -10.0}}"
 
 # Mem/Disk free meter (Tertiary gradient)
-theme[free_start]="{{colors.tertiary.default.hex | set_lightness: -10.0}}"
+theme[free_start]="{{colors.tertiary.default.hex | lighten: -10.0}}"
 theme[free_mid]="{{colors.tertiary.default.hex}}"
-theme[free_end]="{{colors.tertiary.default.hex | set_lightness: 10.0}}"
+theme[free_end]="{{colors.tertiary.default.hex | lighten: 10.0}}"
 
 # Mem/Disk cached meter (Secondary gradient)
-theme[cached_start]="{{colors.secondary.default.hex | set_lightness: -10.0}}"
+theme[cached_start]="{{colors.secondary.default.hex | lighten: -10.0}}"
 theme[cached_mid]="{{colors.secondary.default.hex}}"
-theme[cached_end]="{{colors.secondary.default.hex | set_lightness: 10.0}}"
+theme[cached_end]="{{colors.secondary.default.hex | lighten: 10.0}}"
 
 # Mem/Disk available meter (Primary fixed gradient)
-theme[available_start]="{{colors.primary_fixed.default.hex | set_lightness: -10.0}}"
+theme[available_start]="{{colors.primary_fixed.default.hex | lighten: -10.0}}"
 theme[available_mid]="{{colors.primary_fixed.default.hex}}"
-theme[available_end]="{{colors.primary_fixed.default.hex | set_lightness: 10.0}}"
+theme[available_end]="{{colors.primary_fixed.default.hex | lighten: 10.0}}"
 
 # Mem/Disk used meter (Error gradient)
-theme[used_start]="{{colors.error.default.hex | set_lightness: -10.0}}"
+theme[used_start]="{{colors.error.default.hex | lighten: -10.0}}"
 theme[used_mid]="{{colors.error.default.hex}}"
-theme[used_end]="{{colors.error.default.hex | set_lightness: 10.0}}"
+theme[used_end]="{{colors.error.default.hex | lighten: 10.0}}"
 
 # Download graph colors (Tertiary fixed gradient)
-theme[download_start]="{{colors.tertiary_fixed.default.hex | set_lightness: -10.0}}"
+theme[download_start]="{{colors.tertiary_fixed.default.hex | lighten: -10.0}}"
 theme[download_mid]="{{colors.tertiary_fixed.default.hex}}"
-theme[download_end]="{{colors.tertiary_fixed.default.hex | set_lightness: 10.0}}"
+theme[download_end]="{{colors.tertiary_fixed.default.hex | lighten: 10.0}}"
 
 # Upload graph colors (Secondary fixed gradient)
-theme[upload_start]="{{colors.secondary_fixed.default.hex | set_lightness: -10.0}}"
+theme[upload_start]="{{colors.secondary_fixed.default.hex | lighten: -10.0}}"
 theme[upload_mid]="{{colors.secondary_fixed.default.hex}}"
-theme[upload_end]="{{colors.secondary_fixed.default.hex | set_lightness: 10.0}}"
+theme[upload_end]="{{colors.secondary_fixed.default.hex | lighten: 10.0}}"
 
 # Process box color gradient for threads, mem and cpu usage
 theme[process_start]="{{colors.tertiary.default.hex}}"

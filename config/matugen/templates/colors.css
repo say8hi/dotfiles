@@ -28,7 +28,7 @@
 @define-color surface {{colors.surface.default.hex}};
 @define-color surface_bright {{colors.surface_bright.default.hex}};
 @define-color error {{colors.error.default.hex}};
-@define-color error_dim {{colors.error.default.hex | set_lightness: -10.0}};
+@define-color error_dim {{colors.error.default.hex | lighten: -10.0}};
 @define-color on_error {{colors.on_error.default.hex}};
 @define-color error_container {{colors.error_container.default.hex}};
 @define-color outline {{colors.outline.default.hex}};
