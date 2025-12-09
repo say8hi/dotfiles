@@ -1,0 +1,65 @@
+[mgr]
+
+prepend_keymap = [
+    # Navigation
+    { on = ["<C-u>"], run = "arrow -50%", desc = "Move cursor up 50%" },
+    { on = ["<C-d>"], run = "arrow 50%", desc = "Move cursor down 50%" },
+
+    # Selection
+    { on = ["<Space>"], run = ["select --state=none", "arrow 1"], desc = "Toggle selection" },
+    { on = ["v"], run = "visual_mode", desc = "Enter visual mode" },
+    { on = ["V"], run = "visual_mode --unset", desc = "Exit visual mode" },
+
+    # Operations
+    { on = ["y"], run = "yank", desc = "Copy selected files" },
+    { on = ["d"], run = "remove", desc = "Move to trash / Remove" },
+    { on = ["D"], run = "remove --permanently", desc = "Permanently delete" },
+    { on = ["p"], run = "paste", desc = "Paste copied files" },
+    { on = ["P"], run = "paste --force", desc = "Paste and overwrite" },
+
+    # File operations
+    { on = ["a"], run = "create", desc = "Create file or directory" },
+    { on = ["r"], run = "rename", desc = "Rename file" },
+    { on = ["."], run = "hidden toggle", desc = "Toggle hidden files" },
+    { on = ["s"], run = "search fd", desc = "Search with fd" },
+    { on = ["S"], run = "search rg", desc = "Search with ripgrep" },
+
+    # Sorting
+    { on = ["<C-s>"], run = "sort modified --reverse", desc = "Sort by modified time (newest first)" },
+
+    # Shell
+    { on = ["!"], run = "shell", desc = "Run shell command" },
+]
+
+[tasks]
+
+prepend_keymap = [
+    { on = ["<Esc>"], run = "close", desc = "Close task manager" },
+    { on = ["w"], run = "close", desc = "Close task manager" },
+]
+
+[select]
+
+prepend_keymap = [
+    { on = ["<Esc>"], run = "close", desc = "Cancel selection" },
+    { on = ["<Enter>"], run = "close --submit", desc = "Submit selection" },
+]
+
+[input]
+
+prepend_keymap = [
+    { on = ["<Esc>"], run = "close", desc = "Cancel input" },
+    { on = ["<Enter>"], run = "close --submit", desc = "Submit input" },
+]
+
+[completion]
+
+prepend_keymap = [
+    { on = ["<Tab>"], run = "close --submit", desc = "Submit completion" },
+]
+
+[help]
+
+prepend_keymap = [
+    { on = ["<Esc>"], run = "escape", desc = "Clear filter or hide help" },
+]

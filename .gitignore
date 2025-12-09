@@ -16,6 +16,7 @@ config/gtk-3.0/colors.css
 config/gtk-4.0/colors.css
 config/swaync/style.css
 config/btop/themes/matugen.theme
+config/yazi/theme.toml
 
 # Device-specific configuration - never commit
 config/hypr/conf/local.conf
@@ -23,6 +24,9 @@ config/hypr/conf/local.conf
 # Auto-generated files - never commit
 config/gtk-3.0/bookmarks
 config/hypr/hyprpaper.conf
+
+# Temporary editor files
+*-[0-9]*[0-9]
 
 # Project-specific files - never commit
 CLAUDE.md

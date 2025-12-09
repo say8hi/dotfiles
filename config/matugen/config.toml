@@ -57,3 +57,7 @@ post_hook = "hyprctl reload"
 [templates.btop]
 input_path = '~/.config/matugen/templates/btop.theme'
 output_path = '~/dotfiles/config/btop/themes/matugen.theme'
+
+[templates.yazi]
+input_path = '~/.config/matugen/templates/yazi-theme.toml'
+output_path = '~/dotfiles/config/yazi/theme.toml'

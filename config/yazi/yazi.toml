@@ -1,0 +1,50 @@
+[mgr]
+ratio = [1, 4, 3]
+sort_by = "mtime"
+sort_sensitive = false
+sort_reverse = true
+sort_dir_first = true
+linemode = "size"
+show_hidden = true
+show_symlink = true
+
+[preview]
+tab_size = 2
+max_width = 600
+max_height = 900
+cache_dir = ""
+image_filter = "lanczos3"
+image_quality = 90
+
+[opener]
+edit = [
+    { run = 'nvim "$@"', block = true, for = "unix" },
+]
+open = [
+    { run = 'xdg-open "$@"', desc = "Open", for = "unix" },
+]
+reveal = [
+    { run = 'xdg-open "$(dirname "$0")"', desc = "Reveal", for = "unix" },
+]
+
+[open]
+rules = [
+    { name = "*/", use = "edit" },
+    { mime = "text/*", use = "edit" },
+    { mime = "image/*", use = "open" },
+    { mime = "video/*", use = "open" },
+    { mime = "audio/*", use = "open" },
+    { mime = "inode/x-empty", use = "edit" },
+    { mime = "*", use = "open" },
+]
+
+[tasks]
+micro_workers = 5
+macro_workers = 10
+bizarre_retry = 5
+image_alloc = 536870912
+image_bound = [0, 0]
+suppress_preload = false
+
+[log]
+enabled = false
