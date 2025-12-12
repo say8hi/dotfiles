@@ -40,10 +40,7 @@ opt.completeopt = "menu,menuone,noselect"
 -- Line wrapping
 opt.wrap = false
 
--- Folding
-opt.foldmethod = "indent"  -- use indent folding by default
-opt.foldenable = true      -- enable folding
-opt.foldlevel = 99         -- open all folds by default (use zM to close all)
+-- Folding (managed by nvim-ufo plugin)
 opt.fillchars = {
   fold = " ",
   foldopen = "▾",
@@ -53,21 +50,11 @@ opt.fillchars = {
   eob = " ",
 }
 
--- custom fold text function showing first line
-_G.custom_fold_text = function()
-  local line = vim.fn.getline(vim.v.foldstart)
-  local line_count = vim.v.foldend - vim.v.foldstart + 1
-  local suffix = string.format("  %d lines", line_count)
-  return line .. suffix
-end
-
-vim.o.foldtext = 'v:lua.custom_fold_text()'
-
 -- Better diff
 opt.diffopt:append("vertical,algorithm:histogram,indent-heuristic")
 
 -- Performance
-opt.lazyredraw = false
+opt.lazyredraw = false -- disabled due to conflict with noice.nvim/snacks.nvim
 opt.ttyfast = true
 
 -- Mouse
