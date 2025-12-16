@@ -1,5 +1,3 @@
-dofile(vim.g.base46_cache .. "telescope")
-
 return {
   defaults = {
     prompt_prefix = "   ",

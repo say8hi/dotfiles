@@ -1,5 +1,3 @@
-require "nvchad.autocmds"
-
 local autocmd = vim.api.nvim_create_autocmd
 
 -- auto save on focus lost
@@ -51,7 +49,7 @@ autocmd("BufReadPre", {
   pattern = "*",
   callback = function()
     local max_filesize = 100 * 1024 -- 100 KB
-    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(0))
+    local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(0))
     if ok and stats and stats.size > max_filesize then
       vim.b.large_file = true
       vim.cmd "syntax clear"
@@ -65,7 +63,7 @@ autocmd("BufReadPre", {
 autocmd("BufWritePre", {
   pattern = "*",
   callback = function(event)
-    local file = vim.loop.fs_realpath(event.match) or event.match
+    local file = vim.uv.fs_realpath(event.match) or event.match
     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
   end,
 })
@@ -92,36 +90,85 @@ autocmd("FileType", {
   end,
 })
 
--- auto reload theme when matugen theme file changes
-local theme_file = vim.fn.stdpath "data" .. "/lazy/base46/lua/base46/themes/matugen.lua"
+-- Watch for theme reload trigger file (for matugen integration)
+local trigger_file = vim.fn.stdpath("cache") .. "/.theme-reload-trigger"
 
--- reload theme function
-local function reload_theme()
-  -- clear lua module cache for theme
-  package.loaded["base46.themes.matugen"] = nil
+-- Create watcher for trigger file
+local function setup_theme_watcher()
+  local uv = vim.uv or vim.loop
 
-  -- reload base46 highlights
-  local ok, base46 = pcall(require, "base46")
-  if ok then
-    base46.load_all_highlights()
-    vim.notify("matugen theme reloaded", vim.log.levels.INFO)
+  -- Create cache dir if it doesn't exist
+  vim.fn.mkdir(vim.fn.stdpath("cache"), "p")
+
+  -- Watch trigger file
+  local watch_handle = uv.new_fs_event()
+  if watch_handle then
+    watch_handle:start(
+      vim.fn.stdpath("cache"),
+      {},
+      vim.schedule_wrap(function(err, filename)
+        if err or not filename then
+          return
+        end
+
+        if filename == ".theme-reload-trigger" then
+          -- Reload theme
+          local settings = require "settings"
+          local theme_name = settings.theme
+
+          package.loaded["colors." .. theme_name] = nil
+          package.loaded["theme"] = nil
+
+          local ok, load_err = pcall(require, "colors." .. theme_name)
+          if ok then
+            vim.api.nvim_exec_autocmds("ColorScheme", { pattern = theme_name })
+
+            local lualine_ok, lualine = pcall(require, "lualine")
+            if lualine_ok then
+              package.loaded["configs.lualine"] = nil
+              local lualine_config = require "configs.lualine"
+              lualine.setup(lualine_config.get_config())
+            end
+
+            vim.notify("Theme reloaded: " .. theme_name, vim.log.levels.INFO)
+          else
+            vim.notify("Failed to reload theme: " .. load_err, vim.log.levels.ERROR)
+          end
+        end
+      end)
+    )
   end
 end
 
--- watch theme file for changes
-local watcher = vim.loop.new_fs_event()
-if watcher then
-  watcher:start(
-    theme_file,
-    {},
-    vim.schedule_wrap(function()
-      reload_theme()
-    end)
-  )
-end
+-- Start watcher on VimEnter
+autocmd("VimEnter", {
+  callback = function()
+    setup_theme_watcher()
+  end,
+})
 
--- also reload on manual save
+-- Manual reload when editing color files
 autocmd("BufWritePost", {
-  pattern = theme_file,
-  callback = reload_theme,
+  pattern = "*/colors/*.lua",
+  callback = function()
+    local settings = require "settings"
+    local theme_name = settings.theme
+
+    package.loaded["colors." .. theme_name] = nil
+    package.loaded["theme"] = nil
+
+    local ok, err = pcall(require, "colors." .. theme_name)
+    if ok then
+      vim.api.nvim_exec_autocmds("ColorScheme", { pattern = theme_name })
+
+      local lualine_ok, lualine = pcall(require, "lualine")
+      if lualine_ok then
+        package.loaded["configs.lualine"] = nil
+        local lualine_config = require "configs.lualine"
+        lualine.setup(lualine_config.get_config())
+      end
+
+      vim.notify("Theme reloaded: " .. theme_name, vim.log.levels.INFO)
+    end
+  end,
 })

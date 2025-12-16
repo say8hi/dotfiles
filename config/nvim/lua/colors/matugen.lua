@@ -4,22 +4,22 @@ local base16 = require('mini.base16')
 
 -- Base16 palette from matugen
 local palette = {
-  base00 = '{{colors.background.default.hex}}', -- background
-  base01 = '{{colors.surface.default.hex}}', -- lighter background
-  base02 = '{{colors.surface_dim.default.hex}}', -- selection
-  base03 = '{{colors.surface_variant.default.hex}}', -- comments, line numbers
-  base04 = '{{colors.on_surface_variant.default.hex}}', -- dark foreground
-  base05 = '{{colors.on_surface.default.hex}}', -- foreground
-  base06 = '{{colors.on_surface.default.hex | lighten: 5.0}}', -- light foreground
-  base07 = '{{colors.on_surface.default.hex | lighten: 10.0}}', -- lightest
-  base08 = '{{colors.error.default.hex}}', -- red (variables, errors)
-  base09 = '{{colors.secondary.default.hex | lighten: -10.0}}', -- orange
-  base0A = '{{colors.secondary.default.hex}}', -- yellow
-  base0B = '{{colors.tertiary.default.hex}}', -- green (strings)
-  base0C = '{{colors.primary_fixed.default.hex}}', -- cyan (operators)
-  base0D = '{{colors.primary.default.hex}}', -- blue (functions)
-  base0E = '{{colors.tertiary_fixed.default.hex}}', -- purple (keywords)
-  base0F = '{{colors.error.default.hex | lighten: 5.0}}', -- brown
+  base00 = '#151310', -- background
+  base01 = '#151310', -- lighter background
+  base02 = '#151310', -- selection
+  base03 = '#4e453c', -- comments, line numbers
+  base04 = '#d1c4b8', -- dark foreground
+  base05 = '#e8e1dc', -- foreground
+  base06 = '#f2eeeb', -- light foreground
+  base07 = '#fcfbfb', -- lightest
+  base08 = '#ffb4ab', -- red (variables, errors)
+  base09 = '#c5ab8d', -- orange
+  base0A = '#d6c4af', -- yellow
+  base0B = '#c3cb9f', -- green (strings)
+  base0C = '#ffddb3', -- cyan (operators)
+  base0D = '#e3c197', -- blue (functions)
+  base0E = '#e0e7ba', -- purple (keywords)
+  base0F = '#ffcbc5', -- brown
 }
 
 base16.setup({
@@ -35,21 +35,21 @@ vim.g.colors_name = 'matugen'
 
 -- Custom highlight colors
 local colors = {
-  white = '{{colors.on_surface.default.hex}}',
-  darker_black = '{{colors.surface_container.default.hex}}',
-  black = '{{colors.background.default.hex | lighten: -0.2}}',
-  black2 = '{{colors.surface.default.hex}}',
-  one_bg = '{{colors.surface_dim.default.hex}}',
-  grey = '{{colors.surface_variant.default.hex}}',
-  red = '{{colors.error.default.hex}}',
-  pink = '{{colors.tertiary_fixed.default.hex}}',
-  green = '{{colors.tertiary.default.hex}}',
-  blue = '{{colors.primary.default.hex}}',
-  orange = '{{colors.secondary.default.hex | lighten: -10.0}}',
-  cyan = '{{colors.primary_fixed.default.hex | lighten: 5.0}}',
-  teal = '{{colors.primary_fixed.default.hex}}',
-  purple = '{{colors.tertiary_fixed.default.hex | lighten: -5.0}}',
-  lavender = '{{colors.primary_fixed.default.hex | lighten: 10.0}}',
+  white = '#e8e1dc',
+  darker_black = '#221f1c',
+  black = '#141210',
+  black2 = '#151310',
+  one_bg = '#151310',
+  grey = '#4e453c',
+  red = '#ffb4ab',
+  pink = '#e0e7ba',
+  green = '#c3cb9f',
+  blue = '#e3c197',
+  orange = '#c5ab8d',
+  cyan = '#ffe8cd',
+  teal = '#ffddb3',
+  purple = '#d8e0a7',
+  lavender = '#fff4e6',
 }
 
 local function apply_custom_highlights()

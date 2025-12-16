@@ -10,7 +10,7 @@ return {
         timeout = 3000,
       },
       quickfile = { enabled = true },
-      statuscolumn = { enabled = true },
+      statuscolumn = { enabled = false },
       words = { enabled = true },
       styles = {
         notification = {
@@ -48,13 +48,31 @@ return {
     end,
   },
   {
+    "echasnovski/mini.base16",
+    version = false,
+    priority = 1000,
+    lazy = false,
+    config = function()
+      require("scripts.theme_switcher").load_saved_theme()
+    end,
+  },
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    config = function()
+      require("lualine").setup(require("configs.lualine").get_config())
+    end,
+  },
+  {
     "nvim-tree/nvim-tree.lua",
     dependencies = "nvim-tree/nvim-web-devicons",
+    cmd = { "NvimTreeToggle", "NvimTreeFocus", "NvimTreeFindFile", "NvimTreeCollapse" },
     opts = function()
       return require "configs.nvimtree"
     end,
   },
-  -- disable nvchad's default cmp
+  -- disable default cmp (using blink.cmp instead)
   {
     "hrsh7th/nvim-cmp",
     enabled = false,
@@ -64,30 +82,7 @@ return {
     event = "BufWritePre", -- uncomment for format on save
     opts = require "configs.conform",
   },
-  {
-    "mfussenegger/nvim-lint",
-    event = { "BufReadPre", "BufNewFile" },
-    config = function()
-      local lint = require "lint"
-      lint.linters_by_ft = {
-        sql = { "sqlfluff" },
-      }
 
-      -- auto-lint on save and text change
-      vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave", "TextChanged" }, {
-        callback = function()
-          require("lint").try_lint()
-        end,
-      })
-    end,
-  },
-
-  {
-    "neovim/nvim-lspconfig",
-    config = function()
-      require "configs.lspconfig"
-    end,
-  },
   {
     "nvim-neotest/nvim-nio",
   },
@@ -132,6 +127,8 @@ return {
   },
   {
     "williamboman/mason.nvim",
+    cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUpdate" },
+    build = ":MasonUpdate",
     opts = {
       ensure_installed = {
         "gopls",
@@ -148,7 +145,7 @@ return {
         "goimports-reviser",
         "golines",
         "black",
-        "sqlfluff",
+        "sqls",
       },
     },
   },
@@ -176,6 +173,9 @@ return {
     init = function()
       vim.opt.runtimepath:append(vim.fn.stdpath "config" .. "/after")
     end,
+    config = function()
+      require("nvim-treesitter.configs").setup(require "configs.treesitter")
+    end,
   },
   {
     "kevinhwang91/nvim-ufo",
@@ -188,14 +188,11 @@ return {
     },
     config = function(_, opts)
       require("ufo").setup(opts)
-      vim.o.foldcolumn = "1"
+      vim.o.foldcolumn = "0"
       vim.o.foldlevel = 99
       vim.o.foldlevelstart = 99
       vim.o.foldenable = true
-
-      -- add keymaps for ufo
-      vim.keymap.set("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds" })
-      vim.keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds" })
+      -- Keymaps moved to mappings.lua
     end,
   },
   {
@@ -291,8 +288,9 @@ return {
   },
   {
     "nvim-telescope/telescope.nvim",
-    opts = function()
-      return require "configs.telescope"
+    opts = {},
+    config = function()
+      require("telescope").setup(require "configs.telescope")
     end,
   },
   {
@@ -536,6 +534,12 @@ return {
             enabled = true,
           },
         },
+        list = {
+          selection = {
+            preselect = false, -- don't auto-select first item
+            auto_insert = true, -- show preview when navigating with arrows
+          },
+        },
         menu = {
           border = "rounded",
           max_height = 20,
@@ -543,7 +547,7 @@ return {
           scrollbar = true,
           draw = {
             treesitter = { "lsp" },
-            columns = { { "kind_icon" }, { "label", "label_description", gap = 1 }, { "kind" } },
+            columns = { { "kind_icon" }, { "label", "label_description", gap = 1 }, { "kind", "source_name" } },
           },
         },
         documentation = {
@@ -563,15 +567,21 @@ return {
         },
       },
       fuzzy = {
+        use_frizbee = true, -- use Rust fuzzy matcher (6x faster than fzf)
+        use_typo_resistance = true, -- helps with typos
         prebuilt_binaries = {
           download = true,
         },
       },
       signature = {
         enabled = true,
+        trigger = {
+          show_on_insert_on_trigger_character = true,
+        },
         window = {
           border = "rounded",
           scrollbar = false,
+          treesitter_highlighting = true,
         },
       },
       cmdline = {
@@ -732,7 +742,6 @@ return {
   },
   {
     "SmiteshP/nvim-navic",
-    dependencies = "neovim/nvim-lspconfig",
     lazy = true,
     opts = {
       lsp = { auto_attach = true },
@@ -973,44 +982,103 @@ return {
           changedelete = { text = "~" },
           untracked = { text = "┆" },
         },
-        on_attach = function(bufnr)
-          local gs = package.loaded.gitsigns
-          local function map(mode, l, r, opts)
-            opts = opts or {}
-            opts.buffer = bufnr
-            vim.keymap.set(mode, l, r, opts)
-          end
-          -- Navigation
-          map("n", "]c", function()
-            if vim.wo.diff then
-              return "]c"
-            end
-            vim.schedule(function()
-              gs.next_hunk()
-            end)
-            return "<Ignore>"
-          end, { expr = true, desc = "Next git hunk" })
-          map("n", "[c", function()
-            if vim.wo.diff then
-              return "[c"
-            end
-            vim.schedule(function()
-              gs.prev_hunk()
-            end)
-            return "<Ignore>"
-          end, { expr = true, desc = "Previous git hunk" })
-          -- Actions
-          map("n", "<leader>hs", gs.stage_hunk, { desc = "Stage hunk" })
-          map("n", "<leader>hr", gs.reset_hunk, { desc = "Reset hunk" })
-          map("n", "<leader>hS", gs.stage_buffer, { desc = "Stage buffer" })
-          map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "Undo stage hunk" })
-          map("n", "<leader>hR", gs.reset_buffer, { desc = "Reset buffer" })
-          map("n", "<leader>hp", gs.preview_hunk, { desc = "Preview hunk" })
-          map("n", "<leader>hb", function()
-            gs.blame_line { full = true }
-          end, { desc = "Blame line" })
-          map("n", "<leader>hd", gs.diffthis, { desc = "Diff this" })
+        -- Keymaps moved to mappings.lua
+      }
+    end,
+  },
+  {
+    "akinsho/git-conflict.nvim",
+    event = "VeryLazy",
+    version = "*",
+    config = true,
+    keys = {
+      { "<leader>co", "<cmd>GitConflictChooseOurs<cr>", desc = "Choose ours" },
+      { "<leader>ct", "<cmd>GitConflictChooseTheirs<cr>", desc = "Choose theirs" },
+      { "<leader>cb", "<cmd>GitConflictChooseBoth<cr>", desc = "Choose both" },
+      { "<leader>c0", "<cmd>GitConflictChooseNone<cr>", desc = "Choose none" },
+      { "]x", "<cmd>GitConflictNextConflict<cr>", desc = "Next conflict" },
+      { "[x", "<cmd>GitConflictPrevConflict<cr>", desc = "Previous conflict" },
+      { "<leader>cq", "<cmd>GitConflictListQf<cr>", desc = "List conflicts in quickfix" },
+    },
+  },
+  {
+    "chrisgrieser/nvim-spider",
+    lazy = true,
+    keys = {
+      {
+        "w",
+        "<cmd>lua require('spider').motion('w')<CR>",
+        mode = { "n", "o", "x" },
+        desc = "Spider-w",
+      },
+      {
+        "e",
+        "<cmd>lua require('spider').motion('e')<CR>",
+        mode = { "n", "o", "x" },
+        desc = "Spider-e",
+      },
+      {
+        "b",
+        "<cmd>lua require('spider').motion('b')<CR>",
+        mode = { "n", "o", "x" },
+        desc = "Spider-b",
+      },
+    },
+  },
+  {
+    "folke/persistence.nvim",
+    event = "BufReadPre",
+    opts = {
+      dir = vim.fn.expand(vim.fn.stdpath "state" .. "/sessions/"),
+      options = { "buffers", "curdir", "tabpages", "winsize" },
+    },
+    keys = {
+      {
+        "<leader>qs",
+        function()
+          require("persistence").load()
         end,
+        desc = "Restore session for cwd",
+      },
+      {
+        "<leader>ql",
+        function()
+          require("persistence").load { last = true }
+        end,
+        desc = "Restore last session",
+      },
+      {
+        "<leader>qd",
+        function()
+          require("persistence").stop()
+        end,
+        desc = "Don't save current session",
+      },
+    },
+  },
+  {
+    "utilyre/barbecue.nvim",
+    name = "barbecue",
+    version = "*",
+    event = "LspAttach",
+    dependencies = {
+      "SmiteshP/nvim-navic",
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+      require("barbecue").setup {
+        attach_navic = false,
+        show_modified = false,
+        theme = "auto",
+        include_buftypes = { "" },
+        exclude_filetypes = { "netrw", "toggleterm", "nvim-tree", "help", "lazy", "mason", "gitcommit" },
+        show_dirname = true,
+        show_basename = true,
+        symbols = {
+          modified = "●",
+          ellipsis = "…",
+          separator = "",
+        },
       }
     end,
   },
