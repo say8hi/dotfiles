@@ -1,0 +1,77 @@
+/*
+ * Color scheme selector
+ * Centered, vertical list, text-focused
+ */
+
+configuration {
+    modi: "drun,run";
+    font: "Fira Sans 12";
+    show-icons: false;
+    hover-select: true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+}
+
+@import "~/.cache/colors-rofi.rasi"
+@import "~/dotfiles/config/rofi/border.rasi"
+@import "~/dotfiles/config/rofi/common.rasi"
+
+window {
+    width: 500px;
+    x-offset: 0px;
+    y-offset: 0px;
+    location: center;
+    anchor: center;
+}
+
+mainbox {
+    children: ["listbox"];
+}
+
+listbox {
+    spacing: 15px;
+    background-color: transparent;
+    orientation: vertical;
+    children: ["inputbar", "message", "listview"];
+}
+
+listview {
+    columns: 1;
+    lines: 9;
+    scrollbar: true;
+    spacing: 5px;
+    cycle: true;
+    fixed-height: true;
+    layout: vertical;
+}
+
+element {
+    padding: 12px 20px;
+    orientation: horizontal;
+    border-radius: 8px;
+}
+
+element normal.normal {
+    background-color: @background;
+    text-color: @foreground;
+}
+
+element selected.normal {
+    background-color: @color11;
+    text-color: @background;
+}
+
+element alternate.normal {
+    background-color: @background;
+    text-color: @foreground;
+}
+
+element-text {
+    enabled: true;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+}
+
+inputbar {
+    padding: 15px;
+}

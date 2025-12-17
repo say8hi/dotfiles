@@ -52,6 +52,26 @@ case $1 in
         wallpaper="$HOME/wallpaper/$selected"
     ;;
 
+    # Change color scheme only (keep current wallpaper)
+    "scheme")
+        sleep 0.2
+        if [ ! -f $cache_file ]; then
+            echo "No current wallpaper found"
+            exit 1
+        fi
+        wallpaper=$current_wallpaper
+
+        scheme_selected=$(echo -e "content (default)\nmonochrome (b&w)\nneutral\nvibrant\ntonal-spot\nexpressive\nfidelity\nfruit-salad\nrainbow" | rofi -dmenu -i -p "Select color scheme" -config ~/dotfiles/config/rofi/config-scheme.rasi)
+        if [ ! "$scheme_selected" ]; then
+            echo "No scheme selected"
+            exit
+        fi
+        # Extract scheme name (first word before space or parenthesis)
+        scheme_arg=$(echo "$scheme_selected" | awk '{print $1}')
+        # Override $2 with selected scheme
+        set -- "$1" "$scheme_arg"
+    ;;
+
     # Randomly select wallpaper
     *)
         wallpaper=$(find ~/wallpaper/ -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) | shuf -n 1)
@@ -64,7 +84,28 @@ esac
 # -----------------------------------------------------
 echo "$wallpaper" > "$cache_file"
 echo ":: Wallpaper: $wallpaper"
-matugen image "$wallpaper" --type scheme-content
+
+# Set color scheme type (default: scheme-content)
+# Usage: wallpaper.sh [command] [scheme-type]
+# Available types: content, monochrome, neutral, tonal-spot, vibrant, expressive, fidelity, fruit-salad, rainbow
+scheme_type="${2:-content}"
+
+# Map short names to full scheme names
+case "$scheme_type" in
+    mono|monochrome) scheme_type="monochrome" ;;
+    neutral) scheme_type="neutral" ;;
+    content) scheme_type="content" ;;
+    tonal|tonal-spot) scheme_type="tonal-spot" ;;
+    vibrant) scheme_type="vibrant" ;;
+    expressive) scheme_type="expressive" ;;
+    fidelity) scheme_type="fidelity" ;;
+    fruit-salad) scheme_type="fruit-salad" ;;
+    rainbow) scheme_type="rainbow" ;;
+    *) scheme_type="content" ;;
+esac
+
+echo ":: Using color scheme: scheme-$scheme_type"
+matugen image "$wallpaper" --type "scheme-$scheme_type"
 
 # ----------------------------------------------------- 
 # get wallpaper image name
