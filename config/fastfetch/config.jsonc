@@ -25,37 +25,37 @@
         },
         {
             "type": "os",
-            "key": " OS",
+            "key": "os ",
             "keyColor": "blue"
         },
         {
             "type": "kernel",
-            "key": " Kernel",
+            "key": "ker",
             "keyColor": "cyan"
         },
         {
             "type": "packages",
-            "key": "󰏖 Packages",
+            "key": "pkg",
             "keyColor": "yellow"
         },
         {
             "type": "shell",
-            "key": " Shell",
+            "key": "sh ",
             "keyColor": "green"
         },
         {
             "type": "wm",
-            "key": " WM",
+            "key": "wm ",
             "keyColor": "magenta"
         },
         {
             "type": "terminal",
-            "key": " Terminal",
+            "key": "trm",
             "keyColor": "blue"
         },
         {
             "type": "terminalfont",
-            "key": " Font",
+            "key": "fnt",
             "keyColor": "cyan"
         },
         {
@@ -64,32 +64,32 @@
         },
         {
             "type": "host",
-            "key": "󰌢 Host",
+            "key": "hst",
             "keyColor": "red"
         },
         {
             "type": "cpu",
-            "key": "󰻠 CPU",
+            "key": "cpu",
             "keyColor": "yellow"
         },
         {
             "type": "gpu",
-            "key": "󰍹 GPU",
+            "key": "gpu",
             "keyColor": "green"
         },
         {
             "type": "memory",
-            "key": " Memory",
+            "key": "mem",
             "keyColor": "magenta"
         },
         {
             "type": "disk",
-            "key": " Disk",
+            "key": "dsk",
             "keyColor": "blue"
         },
         {
             "type": "uptime",
-            "key": "󰅐 Uptime",
+            "key": "upt",
             "keyColor": "cyan"
         },
         {
