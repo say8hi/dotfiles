@@ -14,19 +14,19 @@ readonly BACKUP_DIR="${HOME}/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 readonly CONFIG_DIR="${HOME}/.config"
 readonly LOG_FILE="${DOTFILES_DIR}/install.log"
 
-# Load package lists
-if [[ ! -f "${DOTFILES_DIR}/lib/packages.conf" ]]; then
-    echo -e "${RED}✗${NC} lib/packages.conf not found in ${DOTFILES_DIR}"
-    exit 1
-fi
-source "${DOTFILES_DIR}/lib/packages.conf"
-
 # Colors for output
 readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
 readonly YELLOW='\033[1;33m'
 readonly BLUE='\033[0;34m'
 readonly NC='\033[0m'
+
+# Load package lists
+if [[ ! -f "${DOTFILES_DIR}/lib/packages.conf" ]]; then
+    echo -e "${RED}✗${NC} lib/packages.conf not found in ${DOTFILES_DIR}"
+    exit 1
+fi
+source "${DOTFILES_DIR}/lib/packages.conf"
 
 #==============================================================================
 # Helper Functions
@@ -59,8 +59,8 @@ ask_confirmation() {
 
 cleanup() {
     if [[ -n "${BACKUP_DIR:-}" ]] && [[ -d "${BACKUP_DIR}" ]]; then
-        if [[ ! "$(ls -A "${BACKUP_DIR}")" ]]; then
-            rm -rf "${BACKUP_DIR}"
+        if [[ -z "$(ls -A "${BACKUP_DIR}" 2>/dev/null)" ]]; then
+            rm -f -r "${BACKUP_DIR}"
             log "Removed empty backup directory"
         fi
     fi
@@ -74,6 +74,10 @@ error_exit() {
 
 command_exists() {
     command -v "$1" &> /dev/null
+}
+
+package_installed() {
+    pacman -Qi "$1" &> /dev/null
 }
 
 #==============================================================================
@@ -183,13 +187,8 @@ check_dependencies() {
 
     local -a missing=()
 
-    # Check core packages (binary names, not package names)
     for pkg in "${CORE_PACKAGES[@]}"; do
-        # Convert package name to command name (matugen-bin -> matugen)
-        local cmd="${pkg%%-bin}"
-        cmd="${cmd%%-git}"
-
-        if ! command_exists "${cmd}"; then
+        if ! package_installed "${pkg}"; then
             missing+=("${pkg}")
         fi
     done
@@ -459,73 +458,35 @@ setup_sddm() {
 }
 
 install_shell_plugins() {
-    print_header "Setting up shell environment"
+    print_header "Checking shell plugins"
 
-    # Check for starship
-    if ! command_exists starship; then
-        print_warning "starship not found"
-        if ask_confirmation "Install starship? (yay -S starship)"; then
-            if command_exists yay; then
-                yay -S --noconfirm starship || {
-                    print_warning "starship installation failed"
-                }
-            else
-                print_warning "yay not found, please install starship manually: yay -S starship"
-            fi
-        fi
-    else
-        print_success "starship already installed"
-    fi
+    local -a shell_plugins=(
+        "starship"
+        "zsh-autosuggestions"
+        "zsh-syntax-highlighting"
+        "zsh-history-substring-search"
+    )
+    local -a missing_plugins=()
 
-    # Check for zsh-autosuggestions
-    local autosuggestions_path="/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    if [[ ! -f "${autosuggestions_path}" ]]; then
-        print_warning "zsh-autosuggestions not found"
-        if ask_confirmation "Install zsh-autosuggestions? (yay -S zsh-autosuggestions)"; then
-            if command_exists yay; then
-                yay -S --noconfirm zsh-autosuggestions || {
-                    print_warning "zsh-autosuggestions installation failed"
-                }
-            else
-                print_warning "yay not found, please install manually: yay -S zsh-autosuggestions"
-            fi
+    for plugin in "${shell_plugins[@]}"; do
+        if package_installed "${plugin}"; then
+            print_success "${plugin} already installed"
+        else
+            missing_plugins+=("${plugin}")
         fi
-    else
-        print_success "zsh-autosuggestions already installed"
-    fi
+    done
 
-    # Check for zsh-syntax-highlighting
-    local highlighting_path="/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-    if [[ ! -f "${highlighting_path}" ]]; then
-        print_warning "zsh-syntax-highlighting not found"
-        if ask_confirmation "Install zsh-syntax-highlighting? (yay -S zsh-syntax-highlighting)"; then
-            if command_exists yay; then
-                yay -S --noconfirm zsh-syntax-highlighting || {
-                    print_warning "zsh-syntax-highlighting installation failed"
+    if [[ ${#missing_plugins[@]} -gt 0 ]]; then
+        print_warning "Missing shell plugins: ${missing_plugins[*]}"
+        if command_exists yay; then
+            if ask_confirmation "Install missing shell plugins?"; then
+                yay -S --needed --noconfirm "${missing_plugins[@]}" || {
+                    print_warning "Some shell plugins failed to install"
                 }
-            else
-                print_warning "yay not found, please install manually: yay -S zsh-syntax-highlighting"
             fi
+        else
+            print_warning "yay not found, install manually: yay -S ${missing_plugins[*]}"
         fi
-    else
-        print_success "zsh-syntax-highlighting already installed"
-    fi
-
-    # Check for zsh-history-substring-search
-    local substring_path="/usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh"
-    if [[ ! -f "${substring_path}" ]]; then
-        print_warning "zsh-history-substring-search not found"
-        if ask_confirmation "Install zsh-history-substring-search? (yay -S zsh-history-substring-search)"; then
-            if command_exists yay; then
-                yay -S --noconfirm zsh-history-substring-search || {
-                    print_warning "zsh-history-substring-search installation failed"
-                }
-            else
-                print_warning "yay not found, please install manually: yay -S zsh-history-substring-search"
-            fi
-        fi
-    else
-        print_success "zsh-history-substring-search already installed"
     fi
 }
 
@@ -540,13 +501,8 @@ install_optional_packages() {
     local -a missing=()
     local -a already_installed=()
 
-    # Check which optional packages are missing
     for pkg in "${OPTIONAL_PACKAGES[@]}"; do
-        # Convert package name to command name (remove -bin, -git suffixes)
-        local cmd="${pkg%%-bin}"
-        cmd="${cmd%%-git}"
-
-        if ! command_exists "${cmd}"; then
+        if ! package_installed "${pkg}"; then
             missing+=("${pkg}")
         else
             already_installed+=("${pkg}")
@@ -619,7 +575,7 @@ install_optional_components() {
                 elif [[ "${conda_location}" == "2" ]]; then
                     if bash "${tmp_dir}/miniconda.sh" -b -p "${HOME}/miniconda3"; then
                         print_success "Miniconda installed to ~/miniconda3"
-                        print_warning "Note: conda.zsh expects /opt/miniconda3, you may need to edit it"
+                        print_success "conda.zsh will auto-detect ~/miniconda3"
                     else
                         print_error "Miniconda installation failed"
                     fi
