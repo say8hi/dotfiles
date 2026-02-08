@@ -699,6 +699,12 @@ generate_initial_colors() {
     # Apply wallpaper if Hyprland is running
     if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
         if command_exists swww; then
+            # Ensure swww-daemon is running
+            if ! pgrep -x swww-daemon > /dev/null; then
+                swww-daemon > /dev/null 2>&1 &
+                disown
+                sleep 2
+            fi
             swww img "${wallpaper}" --transition-type fade --transition-duration 1 2>/dev/null \
                 && print_success "Wallpaper applied via swww"
         elif command_exists hyprpaper; then
@@ -803,9 +809,16 @@ main() {
     generate_gtk_bookmarks
     set_default_shell
 
-    # Reload Hyprland if running
+    # Reload Hyprland and launch services if running
     if command_exists hyprctl && [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
         hyprctl reload && print_success "Hyprland config reloaded"
+
+        # Launch waybar if not running
+        if ! pgrep -x waybar > /dev/null; then
+            "${DOTFILES_DIR}/config/waybar/launch.sh" &
+            disown
+            print_success "Waybar launched"
+        fi
     fi
 
     # Done
