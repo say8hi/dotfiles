@@ -359,9 +359,9 @@ setup_wallpaper_dir() {
     local copied=0
 
     # Try to copy from Hyprland
-    if [[ -d "/usr/share/hyprland" ]]; then
+    if [[ -d "/usr/share/hypr" ]]; then
         shopt -s nullglob
-        for wallpaper in /usr/share/hyprland/*.png /usr/share/hyprland/*.jpg /usr/share/hyprland/wall*; do
+        for wallpaper in /usr/share/hypr/wall*.png /usr/share/hypr/wall*.jpg; do
             if [[ -f "${wallpaper}" ]]; then
                 if cp "${wallpaper}" "${wallpaper_dir}/" 2>/dev/null; then
                     print_success "Copied $(basename "${wallpaper}") from Hyprland"
@@ -593,21 +593,6 @@ install_optional_components() {
         print_success "Miniconda already installed"
     fi
 
-    # Rust/Cargo
-    if ! command_exists cargo; then
-        if ask_confirmation "Install Rust? (rustup toolchain)"; then
-            print_header "Installing Rust"
-            if curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; then
-                print_success "Rust installed successfully"
-                print_warning "Restart your shell or source ~/.cargo/env to use cargo"
-            else
-                print_error "Rust installation failed"
-            fi
-        fi
-    else
-        print_success "Rust already installed"
-    fi
-
     # Go
     if ! command_exists go; then
         if ask_confirmation "Install Go? (yay -S go)"; then
@@ -757,7 +742,7 @@ main() {
     echo "  • Create symlinks from ${DOTFILES_DIR} to ~/.config/"
     echo "  • Set up SDDM (optional)"
     echo "  • Install shell plugins (optional)"
-    echo "  • Install optional components: Miniconda, Rust, Go, Docker, Node.js (optional)"
+    echo "  • Install optional components: Miniconda, Go, Docker, Node.js (optional)"
     echo "  • Generate initial color scheme"
     echo ""
     echo "Installation log: ${LOG_FILE}"
@@ -785,13 +770,17 @@ main() {
     generate_gtk_bookmarks
     set_default_shell
 
+    # Reload Hyprland if running
+    if command_exists hyprctl && [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+        hyprctl reload && print_success "Hyprland config reloaded"
+    fi
+
     # Done
     print_header "Installation Complete!"
     echo ""
     echo "Next steps:"
-    echo "  1. Logout and login again"
-    echo "  2. Select 'Hyprland' session"
-    echo "  3. Change wallpaper: Super + Shift + W"
+    echo "  1. Change wallpaper: Super + Ctrl + W"
+    echo "  2. If not in Hyprland: logout and select 'Hyprland' session"
     echo ""
     echo "Installation log saved to: ${LOG_FILE}"
     echo ""
