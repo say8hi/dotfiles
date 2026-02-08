@@ -529,6 +529,58 @@ install_shell_plugins() {
     fi
 }
 
+install_optional_packages() {
+    print_header "Installing optional packages"
+
+    if ! command_exists yay; then
+        print_warning "yay not found, skipping optional packages"
+        return 0
+    fi
+
+    local -a missing=()
+    local -a already_installed=()
+
+    # Check which optional packages are missing
+    for pkg in "${OPTIONAL_PACKAGES[@]}"; do
+        # Convert package name to command name (remove -bin, -git suffixes)
+        local cmd="${pkg%%-bin}"
+        cmd="${cmd%%-git}"
+
+        if ! command_exists "${cmd}"; then
+            missing+=("${pkg}")
+        else
+            already_installed+=("${pkg}")
+        fi
+    done
+
+    if [[ ${#already_installed[@]} -gt 0 ]]; then
+        print_success "${#already_installed[@]} optional packages already installed"
+    fi
+
+    if [[ ${#missing[@]} -eq 0 ]]; then
+        print_success "All optional packages already installed"
+        return 0
+    fi
+
+    echo ""
+    echo "Missing optional packages (${#missing[@]}):"
+    for pkg in "${missing[@]}"; do
+        echo "  • ${pkg}"
+    done
+    echo ""
+
+    if ask_confirmation "Install all missing optional packages?"; then
+        if yay -S --needed --noconfirm "${missing[@]}"; then
+            print_success "Optional packages installed successfully"
+        else
+            print_warning "Some optional packages failed to install"
+        fi
+    else
+        print_warning "Skipped optional packages installation"
+        echo "Install manually with: yay -S ${missing[*]}"
+    fi
+}
+
 install_optional_components() {
     print_header "Optional components installation"
 
@@ -771,6 +823,7 @@ main() {
     setup_wallpaper_dir
     setup_sddm
     install_shell_plugins
+    install_optional_packages
     install_optional_components
     generate_initial_colors
     generate_gtk_bookmarks

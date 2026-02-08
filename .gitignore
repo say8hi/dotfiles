@@ -30,4 +30,4 @@ config/hypr/hyprpaper.conf
 
 # Project-specific files - never commit
 CLAUDE.md
-config/nvim/CLAUDE.md
+install.log

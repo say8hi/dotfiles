@@ -173,8 +173,8 @@ return {
     init = function()
       vim.opt.runtimepath:append(vim.fn.stdpath "config" .. "/after")
     end,
-    config = function()
-      require("nvim-treesitter.configs").setup(require "configs.treesitter")
+    opts = function()
+      return require "configs.treesitter"
     end,
   },
   {

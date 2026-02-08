@@ -29,6 +29,8 @@
 - [Performance Optimizations](#performance-optimizations)
 - [Troubleshooting](#troubleshooting)
 - [Credits & Acknowledgments](#credits--acknowledgments)
+- [Contributing](#contributing)
+- [Issues](#issues)
 - [License](#license)
 
 ## Overview
@@ -432,6 +434,60 @@ Ensure your terminal supports true color (24-bit color). For example:
 
 - **NvChad** - Original foundation and inspiration ([nvchad.com](https://nvchad.com))
 - All plugin authors for their amazing work
+
+## Contributing
+
+Contributions are welcome! If you'd like to contribute to this configuration:
+
+1. **Fork the repository** on GitHub
+2. **Create a feature branch** for your changes:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Make your changes** following the existing code style
+4. **Test thoroughly** to ensure everything works
+5. **Commit your changes** with clear, descriptive commit messages
+6. **Push to your fork** and submit a pull request
+
+### Contribution Guidelines
+
+- Keep the configuration modular and well-documented
+- Follow the existing file structure and naming conventions
+- Test your changes with a fresh Neovim installation if possible
+- Update documentation if you add new features or change behavior
+- Ensure all comments in code are written in English
+
+### Areas for Contribution
+
+- New language server configurations
+- Additional theme implementations
+- Bug fixes and performance improvements
+- Documentation improvements
+- Plugin suggestions (with rationale)
+
+## Issues
+
+Found a bug or have a feature request? Please use the [GitHub Issues](https://github.com/say8hi/nvim-config/issues) page.
+
+### Reporting Bugs
+
+When reporting a bug, please include:
+
+1. **Neovim version**: Run `:version` in Neovim
+2. **Operating system**: Linux, macOS, Windows
+3. **Description**: What happened vs. what you expected
+4. **Reproduction steps**: How to reproduce the issue
+5. **Error messages**: Any error messages from `:messages` or `:checkhealth`
+6. **Screenshots**: If applicable
+
+### Feature Requests
+
+For feature requests, please:
+
+1. **Check existing issues** to avoid duplicates
+2. **Describe the feature** and its benefits
+3. **Explain use cases** where this would be helpful
+4. **Suggest implementation** if you have ideas
 
 ## License
 

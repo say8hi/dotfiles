@@ -2,7 +2,7 @@
 vim.opt.runtimepath:prepend(vim.fn.stdpath("config"))
 
 return {
-  ensure_installed = { "python", "go", "lua", "luadoc", "printf", "vim", "vimdoc", "json", "sql" },
+  ensure_installed = { "python", "go", "lua", "luadoc", "printf", "vim", "vimdoc", "json", "sql", "rust" },
 
   highlight = {
     enable = true,

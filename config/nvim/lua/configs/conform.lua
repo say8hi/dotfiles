@@ -10,20 +10,17 @@ local options = {
     yaml = { "prettier" },
     markdown = { "prettier" },
     lua = { "stylua" },
-    sql = { "sqlfluff" },
+    rust = { "rustfmt" },
+    -- sql formatting will use LSP (sqls) via lsp_fallback
   },
   formatters = {
-    sqlfluff = {
-      args = { "format", "--dialect=postgres", "--nocolor", "-" },
-      stdin = true,
-    },
     golines = {
       prepend_args = { "--max-len=120", "--base-formatter=gofumpt" },
     },
   },
   format_on_save = function(bufnr)
     -- disable format on save for specific filetypes
-    local disable_filetypes = { c = true, cpp = true }
+    local disable_filetypes = { c = true, cpp = true, sql = true }
     if disable_filetypes[vim.bo[bufnr].filetype] then
       return
     end

@@ -196,7 +196,31 @@ vim.lsp.config.lua_ls = make_config(
   }
 )
 
-local servers = { "gopls", "ruff", "pyright", "jsonls", "ts_ls", "html", "cssls", "sqls", "lua_ls" }
+vim.lsp.config.rust_analyzer = make_config(
+  { "rust-analyzer" },
+  { "rust" },
+  { "Cargo.toml", ".git" },
+  {
+    ["rust-analyzer"] = {
+      checkOnSave = {
+        command = "clippy",
+      },
+      inlayHints = {
+        chainingHints = { enable = true },
+        parameterHints = { enable = true },
+        typeHints = { enable = true },
+      },
+      cargo = {
+        allFeatures = true,
+      },
+      procMacro = {
+        enable = true,
+      },
+    },
+  }
+)
+
+local servers = { "gopls", "ruff", "pyright", "jsonls", "ts_ls", "html", "cssls", "sqls", "lua_ls", "rust_analyzer" }
 for _, server in ipairs(servers) do
   vim.lsp.enable(server)
 end
