@@ -2,6 +2,13 @@
 
 Personal configuration files for Arch Linux with Hyprland.
 
+## Preview
+
+|                                 |                           |
+| ------------------------------- | ------------------------- |
+| ![Desktop](.github/desktop.png) | ![Rofi](.github/rofi.png) |
+| ![Neovim](.github/neovim.png)   |
+
 ## Stack
 
 - **WM**: [Hyprland](https://hyprland.org/) - Dynamic tiling Wayland compositor
@@ -175,13 +182,13 @@ Changing wallpaper automatically:
 
 ### Key Bindings
 
-| Key | Action |
-|-----|--------|
-| `Super + Ctrl + W` | Select wallpaper |
+| Key                 | Action              |
+| ------------------- | ------------------- |
+| `Super + Ctrl + W`  | Select wallpaper    |
 | `Super + Shift + W` | Change color scheme |
-| `Super + Shift + B` | Restart Waybar |
-| `Alt + Space` | App launcher (Rofi) |
-| `Super + V` | Clipboard history |
+| `Super + Shift + B` | Restart Waybar      |
+| `Alt + Space`       | App launcher (Rofi) |
+| `Super + V`         | Clipboard history   |
 
 ## Contributing
 
@@ -200,6 +207,7 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 **Format:** `<type>(<optional scope>): <description>`
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `chore`: Maintenance tasks
@@ -212,6 +220,7 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 - `build`: Build system changes
 
 **Rules:**
+
 - First line ≤ 72 characters (optimal ~50)
 - Use imperative mood ("add" not "added")
 - Start with lowercase (unless proper noun)
@@ -219,6 +228,7 @@ This project follows [Conventional Commits](https://www.conventionalcommits.org/
 - Body and footer lines ≤ 72 characters
 
 **Example:**
+
 ```
 feat(kitty): add word navigation keybindings
 
