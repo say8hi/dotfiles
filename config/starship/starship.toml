@@ -17,10 +17,12 @@ $docker_context\
 $character"""
 
 right_format = """
+$cmd_duration\
 $conda\
 $python\
 $rust\
 $golang\
+$nodejs\
 $time\
 """
 
@@ -44,18 +46,6 @@ success_symbol = "[\\$](bold green)"
 error_symbol = "[\\$](bold error)"
 vimcmd_symbol = "[\\$](bold green)"
 
-# --- Username / Hostname ---
-[hostname]
-ssh_only = false
-format = "[$hostname]($style)"
-style = "bold tertiary"
-
-[username]
-style_user = "bold tertiary"
-style_root = "bold error"
-format = "[@$user]($style) "
-show_always = true
-
 # --- Directory ---
 [directory]
 style = "bold primary"
@@ -72,25 +62,15 @@ symbol = " "
 style = "bold bright-blue"
 format = "on [$symbol$branch]($style) "
 
-[git_status]
-style = "bold bright-cyan"
-format = '([ $all_status$ahead_behind ]($style)) '
-conflicted = "⚔️ "
-ahead = "⇡${count}"
-behind = "⇣${count}"
-diverged = "⇕⇡${ahead_count}⇣${behind_count}"
-untracked = "?"
-stashed = "📦"
-modified = "!"
-staged = "+"
-renamed = "»"
-deleted = "✘"
+[cmd_duration]
+min_time = 2000
+format = "[󰔛 $duration]($style) "
+style = "bold tertiary"
 
-[git_metrics]
-disabled = false
-added_style = "green"
-deleted_style = "red"
-format = '[+$added/-$deleted]($style) '
+[nodejs]
+format = "[ $version]($style) "
+style = "bold green"
+detect_extensions = ["js", "ts", "mjs", "cjs"]
 
 [time]
 disabled = false
