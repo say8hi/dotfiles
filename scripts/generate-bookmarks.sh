@@ -11,6 +11,9 @@ BOOKMARKS_FILE="${HOME}/.config/gtk-3.0/bookmarks"
 # Create directory if it doesn't exist
 mkdir -p "$(dirname "${BOOKMARKS_FILE}")"
 
+# Create bookmark target directories
+mkdir -p "${HOME}/Downloads" "${HOME}/Desktop" "${HOME}/Documents" "${HOME}/Pictures" "${HOME}/Videos"
+
 # Generate bookmarks
 cat > "${BOOKMARKS_FILE}" << EOF
 file://${HOME}/Downloads Downloads
