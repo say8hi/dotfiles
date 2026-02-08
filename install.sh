@@ -128,27 +128,11 @@ check_yay() {
         return 0
     fi
 
-    # Check if required dependencies are installed
-    if ! command_exists git; then
-        print_error "git is required to install yay"
-        if ask_confirmation "Install git with pacman?"; then
-            sudo pacman -S --needed --noconfirm git || {
-                print_error "Failed to install git"
-                return 1
-            }
-        else
-            return 1
-        fi
-    fi
-
-    if ! command_exists makepkg; then
-        if ask_confirmation "Install base-devel? (required for building AUR packages)"; then
-            sudo pacman -S --needed --noconfirm base-devel || {
-                print_error "Failed to install base-devel"
-                return 1
-            }
-        fi
-    fi
+    # Install required dependencies for building yay
+    sudo pacman -S --needed --noconfirm base-devel git || {
+        print_error "Failed to install base-devel and git"
+        return 1
+    }
 
     # Install yay
     print_header "Installing yay"
@@ -436,9 +420,8 @@ setup_sddm() {
             return 1
         fi
 
-        # Copy SDDM config
-        sudo mkdir -p /etc/sddm.conf.d || error_exit "Failed to create /etc/sddm.conf.d"
-        sudo cp "${DOTFILES_DIR}/config/sddm/sddm.conf" /etc/sddm.conf.d/ || print_warning "Failed to copy SDDM config"
+        # Copy SDDM config (write directly to /etc/sddm.conf to avoid override)
+        sudo cp "${DOTFILES_DIR}/config/sddm/sddm.conf" /etc/sddm.conf || print_warning "Failed to copy SDDM config"
         print_success "SDDM config installed"
 
         # Check if Silent theme exists
@@ -703,7 +686,7 @@ generate_initial_colors() {
             if ! pgrep -x swww-daemon > /dev/null; then
                 swww-daemon > /dev/null 2>&1 &
                 disown
-                sleep 2
+                sleep 1
             fi
             swww img "${wallpaper}" --transition-type fade --transition-duration 1 2>/dev/null \
                 && print_success "Wallpaper applied via swww"
@@ -827,6 +810,7 @@ main() {
     echo "Next steps:"
     echo "  1. Change wallpaper: Super + Ctrl + W"
     echo "  2. If not in Hyprland: logout and select 'Hyprland' session"
+    echo "  3. If you have any problems: logout or reboot and login again"
     echo ""
     echo "Installation log saved to: ${LOG_FILE}"
     echo ""
