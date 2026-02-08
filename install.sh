@@ -671,17 +671,50 @@ generate_initial_colors() {
         return 0
     fi
 
-    # Find a wallpaper in ~/wallpaper
+    # Pick a random wallpaper from ~/wallpaper
     local wallpaper
-    wallpaper=$(find "${HOME}/wallpaper" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | head -1)
+    wallpaper=$(find "${HOME}/wallpaper" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | shuf -n 1)
 
-    if [[ -n "${wallpaper}" ]]; then
-        mkdir -p "${HOME}/.cache"
-        echo "${wallpaper}" > "${HOME}/.cache/current_wallpaper"
-        matugen image "${wallpaper}" --type scheme-content || print_warning "Matugen color generation failed"
-        print_success "Generated colors from wallpaper"
+    if [[ -z "${wallpaper}" ]]; then
+        print_warning "No wallpapers found in ~/wallpaper, skipping"
+        return 0
+    fi
+
+    mkdir -p "${HOME}/.cache"
+    echo "${wallpaper}" > "${HOME}/.cache/current_wallpaper"
+
+    # Generate colors
+    matugen image "${wallpaper}" --type scheme-content || print_warning "Matugen color generation failed"
+    print_success "Generated colors from ${wallpaper##*/}"
+
+    # Generate rasi file for rofi background
+    local blurred="${HOME}/.cache/blurred_wallpaper.png"
+    if command_exists magick; then
+        magick "${wallpaper}" -filter box -quality 85 -resize 75% -blur 50x30 "${blurred}" 2>/dev/null
     else
-        print_warning "No wallpapers found in ~/wallpaper, skipping color generation"
+        cp "${wallpaper}" "${blurred}"
+    fi
+    echo "* { current-image: url(\"${blurred}\", height); }" > "${HOME}/.cache/current_wallpaper.rasi"
+
+    # Apply wallpaper if Hyprland is running
+    if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+        if command_exists swww; then
+            swww img "${wallpaper}" --transition-type fade --transition-duration 1 2>/dev/null \
+                && print_success "Wallpaper applied via swww"
+        elif command_exists hyprpaper; then
+            local hyprpaper_conf="${HOME}/.config/hypr/hyprpaper.conf"
+            cat > "${hyprpaper_conf}" <<EOF
+preload = ${wallpaper}
+wallpaper = ,${wallpaper}
+splash = false
+EOF
+            killall hyprpaper 2>/dev/null
+            hyprpaper &
+            disown
+            print_success "Wallpaper applied via hyprpaper"
+        else
+            print_warning "No wallpaper engine found (swww or hyprpaper)"
+        fi
     fi
 }
 
