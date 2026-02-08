@@ -84,7 +84,7 @@
     },
     "custom/power":{
     	"format":"󰐥",
-      "on-click": "wlogout",
+      "on-click": "wlogout -b 6 -c 16 -r 0 -T 450 -B 450 -L 200 -R 200",
     },
     "custom/notification":{
     	"format": "󱅫",
