@@ -11,7 +11,6 @@
 	"modules-left":[
     "hyprland/workspaces",
     "custom/crypto",
-    "custom/cava"
   ],
 "modules-center": [
     "battery",
@@ -33,16 +32,16 @@
 		    "all-outputs": true,
 		    "format": "{icon}",
 		    "format-icons": {
-		        "1": "⚜️",
-		        "2": "💎",
-		        "3": "💻",
-		        "4": "🌊",
-		        "5": "💸",
-		        "6": "🧲",
-		        "7": "💀",
-		        "8": "💡",
-		        "9": "🌀",
-		        "10": "☢️",
+		        "1": "一",
+		        "2": "二",
+		        "3": "三",
+		        "4": "四",
+		        "5": "五",
+		        "6": "六",
+		        "7": "七",
+		        "8": "八",
+		        "9": "九",
+		        "10": "十"
 		    },
 		    "on-scroll-up": "hyprctl dispatch workspace e+1 1>/dev/null",
 		    "on-scroll-down": "hyprctl dispatch workspace e-1 1>/dev/null",
@@ -76,7 +75,7 @@
         "on-click": "nm-connection-editor"
     },
     "clock#time": {
-        "format": "{:%H:%M %a}",
+        "format": "{:%H:%M  %a}",
         // "timezone": "America/New_York",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
         // START CLOCK FORMAT
@@ -84,7 +83,7 @@
         // END CLOCK FORMAT
     },
     "custom/power":{
-    	"format":"",
+    	"format":"󰐥",
       "on-click": "wlogout",
     },
     "custom/notification":{
@@ -93,17 +92,17 @@
     },
 
     "cpu": {
-        "format": "C {usage}%",
+        "format": "󰍛 {usage}%",
         "on-click": "kitty -e btop"
     },
 
     "memory": {
-        "format": "M {}% ",
+        "format": " {}%",
         "on-click": "kitty -e btop"
     },
 
     "hyprland/language": {
-        "format": "K {short}"
+        "format": "󰌌 {short}"
     },
 
     "custom/crypto": {
@@ -118,14 +117,6 @@
         "icon-size": 21,
         "spacing": 10
     },
-
-    "custom/cava": {
-        "exec": "~/dotfiles/scripts/cava-waybar.sh",
-        "return-type": "json",
-        "escape": true,
-        "tooltip": "Audio Visualizer",
-        "on-click": "pavucontrol"
-    },
     "battery": {
       "bat": "BATT",
       "adapter": "ACAD",
@@ -139,7 +130,7 @@
     },
     "backlight": {
       "device": "amdgpu_bl1",
-      "format": "{percent}% ☀️",
+      "format": "󰃟 {percent}%",
         "on-scroll-up":"brightnessctl set +1%",
         "on-scroll-down":"brightnessctl set 1%-"
     },

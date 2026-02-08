@@ -1,7 +1,7 @@
 @import "../../../.cache/colors-waybar.css";
 
 * {
-  font-size: 13px;
+  font-size: 15px;
   font-family: "FiraCode Nerd Font";
   color: @foreground;
 }
@@ -12,6 +12,25 @@
 #workspaces {
   border-radius: 5px;
   box-shadow: 0px 0px black;
+}
+
+#workspaces button {
+  padding: 0px 6px;
+  color: @foreground;
+  background: transparent;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+#workspaces button:hover {
+  background: @primary;
+  color: @surface;
+}
+
+#workspaces button.active {
+  background: @primary;
+  color: @surface;
+  font-weight: bold;
 }
 
 #workspaces,
@@ -26,14 +45,12 @@
 #custom-power,
 #custom-crypto,
 #tray,
-#custom-cava,
 #custom-notification {
   margin-left: 5px;
   margin-right: 5px;
   background: @surface;
   border-radius: 5px 0px 0px 5px;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 4px 14px;
 }
 
 #network,
@@ -68,7 +85,6 @@
 #custom-power,
 #battery,
 #custom-crypto,
-#custom-cava,
 #tray,
 #custom-notification {
   border-radius: 5px;
@@ -82,19 +98,16 @@
   color: @error;
   margin-right: 10px;
   padding-right: 14px;
+  transition: all 0.2s ease;
+}
+
+#custom-power:hover {
+  background: @error;
+  color: @surface;
 }
 
 #custom-crypto {
   font-family: cryptofont;
-}
-
-#custom-cava {
-  font-family: "FiraCode Nerd Font", "Font Awesome 6 Free";
-  font-size: 14px;
-  padding: 0 8px;
-  color: @primary;
-  margin: 0 4px;
-  min-width: 80px;
 }
 
 @keyframes equalizer {
@@ -113,13 +126,6 @@
   100% {
     color: @primary;
   }
-}
-
-#custom-cava.playing {
-  animation-name: equalizer;
-  animation-duration: 4s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
 }
 
 #wireplumber,
