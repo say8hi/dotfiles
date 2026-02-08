@@ -24,13 +24,21 @@
 
 #workspaces button:hover {
   background: @primary;
-  color: @surface;
+  color: @on_primary;
+}
+
+#workspaces button:hover label {
+  color: @on_primary;
 }
 
 #workspaces button.active {
   background: @primary;
-  color: @surface;
+  color: @on_primary;
   font-weight: bold;
+}
+
+#workspaces button.active label {
+  color: @on_primary;
 }
 
 #workspaces,
