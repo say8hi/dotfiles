@@ -29,7 +29,7 @@ mainbox {
 }
 
 listbox {
-    spacing: 15px;
+    spacing: 10px;
     background-color: transparent;
     orientation: vertical;
     children: ["inputbar", "message", "listview"];
@@ -39,31 +39,21 @@ listview {
     columns: 1;
     lines: 9;
     scrollbar: true;
-    spacing: 5px;
+    spacing: 4px;
     cycle: true;
     fixed-height: true;
     layout: vertical;
 }
 
 element {
-    padding: 12px 20px;
+    padding: 10px 20px;
     orientation: horizontal;
-    border-radius: 8px;
-}
-
-element normal.normal {
-    background-color: @background;
-    text-color: @foreground;
+    border-radius: 12px;
 }
 
 element selected.normal {
     background-color: @color11;
-    text-color: @background;
-}
-
-element alternate.normal {
-    background-color: @background;
-    text-color: @foreground;
+    text-color: @onactive;
 }
 
 element-text {
@@ -73,5 +63,5 @@ element-text {
 }
 
 inputbar {
-    padding: 15px;
+    padding: 12px 20px;
 }

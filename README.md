@@ -4,11 +4,24 @@ Personal configuration files for Arch Linux with Hyprland.
 
 ## Preview
 
-|                                 |                                 |
-| ------------------------------- | ------------------------------- |
-| ![Desktop](.github/desktop.png) | ![Rofi](.github/rofi.png)       |
-| ![Neovim](.github/neovim.png)   | ![Wlogout](.github/wlogout.png) |
-
+<table align="center">
+  <tr>
+    <td colspan="3">
+      <img src=".github/desktop.png">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src=".github/rofi.png">
+    </td>
+    <td>
+      <img src=".github/neovim.png">
+    </td>
+   <td>
+      <img src=".github/wlogout.png">
+    </td>
+  </tr>
+</table>
 ## Stack
 
 - **WM**: [Hyprland](https://hyprland.org/) - Dynamic tiling Wayland compositor

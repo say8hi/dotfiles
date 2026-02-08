@@ -4,7 +4,7 @@
  */
 
 configuration {
-    font: "Fira Sans 11";
+    font: "Fira Sans 12";
     show-icons: false;
     hover-select: true;
     me-select-entry: "";
@@ -25,12 +25,11 @@ window {
 }
 
 mainbox {
-    background-image: @current-image;
     children: ["listbox"];
 }
 
 listbox {
-    spacing: 20px;
+    spacing: 10px;
     background-color: transparent;
     orientation: vertical;
     children: ["message", "listview"];

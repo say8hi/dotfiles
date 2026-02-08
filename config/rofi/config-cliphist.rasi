@@ -5,7 +5,7 @@
 
 configuration {
     modi: "drun,run";
-    font: "Fira Sans 11";
+    font: "Fira Sans 12";
     show-icons: false;
     icon-theme: "kora";
     display-drun: "APPS";
@@ -25,7 +25,7 @@ configuration {
 @import "~/dotfiles/config/rofi/common.rasi"
 
 window {
-    width: 400px;
+    width: 330px;
     x-offset: -14px;
     y-offset: 65px;
     location: northeast;
@@ -33,12 +33,11 @@ window {
 }
 
 mainbox {
-    background-image: @current-image;
     children: ["listbox"];
 }
 
 listbox {
-    spacing: 20px;
+    spacing: 10px;
     background-color: transparent;
     orientation: vertical;
     children: ["inputbar", "message", "listview"];

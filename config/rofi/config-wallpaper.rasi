@@ -5,7 +5,7 @@
 
 configuration {
     modi: "drun,run";
-    font: "Fira Sans 11";
+    font: "Fira Sans 12";
     show-icons: true;
     hover-select: true;
     me-select-entry: "";
@@ -31,7 +31,7 @@ mainbox {
 }
 
 listbox {
-    spacing: 20px;
+    spacing: 10px;
     background-color: transparent;
     orientation: vertical;
     children: ["inputbar", "message", "listview"];
@@ -41,7 +41,7 @@ listview {
     columns: 5;
     lines: 1;
     scrollbar: false;
-    spacing: 20px;
+    spacing: 8px;
     cycle: false;
     fixed-height: true;
     fixed-columns: true;
@@ -50,27 +50,25 @@ listview {
 }
 
 element {
-    padding: 0px;
+    padding: 8px;
     orientation: vertical;
-}
-
-element normal.normal {
-    border-color: @color11;
+    border-radius: 16px;
+    border: 2px;
+    border-color: transparent;
 }
 
 element selected.normal {
-    border-color: @foreground;
-}
-
-element alternate.normal {
-    border-color: @color11;
+    border-color: @selected;
 }
 
 element-icon {
     size: 240px;
     horizontal-align: 0.5;
+    border-radius: 12px;
 }
 
 element-text {
-    enabled: false;
+    enabled: true;
+    horizontal-align: 0.5;
+    padding: 8px 0px 0px 0px;
 }

@@ -5,7 +5,7 @@
 
 configuration {
     modi: "drun,run";
-    font: "Fira Sans 11";
+    font: "Fira Sans 12";
     show-icons: false;
     icon-theme: "kora";
     display-drun: "APPS";
@@ -33,12 +33,11 @@ window {
 }
 
 mainbox {
-    background-image: @current-image;
     children: ["listbox"];
 }
 
 listbox {
-    spacing: 20px;
+    spacing: 10px;
     background-color: transparent;
     orientation: vertical;
     children: ["listview"];
