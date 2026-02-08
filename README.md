@@ -7,7 +7,7 @@ Personal configuration files for Arch Linux with Hyprland.
 - **WM**: [Hyprland](https://hyprland.org/) - Dynamic tiling Wayland compositor
 - **Terminal**: [Kitty](https://sw.kovidgoyal.net/kitty/) - GPU-accelerated terminal
 - **Shell**: ZSH + Starship
-- **Editor**: [Neovim](https://neovim.io/) with [NvChad](https://nvchad.com/)
+- **Editor**: [Neovim](https://neovim.io/)
 - **Bar**: [Waybar](https://github.com/Alexays/Waybar)
 - **Launcher**: [Rofi](https://github.com/davatorium/rofi)
 - **Notifications**: [SwayNC](https://github.com/ErikReider/SwayNotificationCenter)
@@ -24,7 +24,7 @@ dotfiles/
 │   │   ├── conf/        # Modular configuration files
 │   │   └── scripts/     # Wallpaper, screenshot, and utility scripts
 │   ├── kitty/           # Terminal emulator
-│   ├── nvim/            # Neovim + NvChad
+│   ├── nvim/            # Neovim
 │   ├── rofi/            # Application launcher
 │   ├── waybar/          # Status bar
 │   ├── waybar-crypto/   # Crypto prices module for waybar
@@ -34,9 +34,12 @@ dotfiles/
 │   ├── starship/        # Shell prompt
 │   ├── matugen/         # Color scheme generator
 │   ├── fastfetch/       # System info tool
+│   ├── btop/            # System monitor
+│   ├── yazi/            # Terminal file manager
+│   ├── yay/             # AUR helper config
 │   ├── gtk-3.0/         # GTK3 theme
 │   ├── gtk-4.0/         # GTK4 theme
-│   └── sddm/            # Login screen
+│   └── sddm/           # Login screen
 ├── home/                # Home directory files
 │   ├── .zshrc           # ZSH config
 │   └── shell/           # Modular shell configs
@@ -54,13 +57,12 @@ Note: Wallpapers are stored in ~/wallpaper (created during installation)
 Colors are automatically generated from wallpaper using Matugen and applied to:
 
 - Terminal (Kitty)
-- Editor (Neovim with auto-reload)
+- Editor (Neovim)
 - Launcher (Rofi)
 - Status bar (Waybar)
 - Notification center (SwayNC)
 - Login screen (SDDM)
-
-Neovim theme automatically reloads when wallpaper changes using file watcher - no restart needed.
+- GTK applications
 
 ### Environment Variables
 
@@ -86,10 +88,14 @@ Support for device-specific settings via `local.conf`:
 
 ### Dependencies
 
+Full package lists are defined in `lib/packages.conf`. Key packages:
+
 **Core:**
 
 ```bash
-hyprland waybar kitty rofi neovim matugen-bin swww sddm
+hyprland waybar kitty rofi neovim matugen-bin swww swaync wlogout
+grim slurp wl-clipboard jq cliphist pipewire wireplumber
+ttf-firacode-nerd noto-fonts-cjk noto-fonts-emoji
 ```
 
 **Shell:**
@@ -101,7 +107,8 @@ zsh starship zsh-autosuggestions zsh-syntax-highlighting zoxide fzf
 **Optional:**
 
 ```bash
-wlogout swappy swaync
+sddm hyprlock hypridle brightnessctl playerctl cava btop fastfetch
+thunar nautilus zen-browser-bin pavucontrol waybar-crypto yazi
 ```
 
 ### Installation
@@ -119,12 +126,14 @@ cd ~/dotfiles
 
 The script will:
 
-- Check dependencies
+- Check and install dependencies (via pacman/yay)
 - Backup existing configs
 - Create symlinks
 - Create device-specific configuration file
 - Setup SDDM (optional)
-- Install starship and zsh plugins (optional)
+- Install shell plugins (optional)
+- Install optional packages (optional)
+- Install optional components: Miniconda, Rust, Go, Docker, Node.js (optional)
 - Generate initial color scheme
 
 #### Post-Installation
@@ -138,31 +147,6 @@ nano ~/.config/hypr/conf/local.conf
 
 Add your API keys, device-specific keybindings, or hardware settings. See `local.conf.example` for available options.
 
-#### Manual
-
-```bash
-# Clone repository
-git clone <your-repo> ~/dotfiles
-
-# Install dependencies (Arch Linux)
-yay -S hyprland waybar kitty rofi neovim matugen-bin swww sddm zsh
-
-# Create wallpaper directory
-mkdir -p ~/wallpaper
-
-# Create symlinks
-ln -sf ~/dotfiles/config/hypr ~/.config/hypr
-ln -sf ~/dotfiles/config/kitty ~/.config/kitty
-ln -sf ~/dotfiles/config/nvim ~/.config/nvim
-ln -sf ~/dotfiles/config/rofi ~/.config/rofi
-ln -sf ~/dotfiles/config/waybar ~/.config/waybar
-ln -sf ~/dotfiles/config/matugen ~/.config/matugen
-ln -sf ~/dotfiles/home/.zshrc ~/.zshrc
-
-# Generate colors from wallpaper
-~/dotfiles/config/hypr/scripts/wallpaper.sh select
-```
-
 ## Usage
 
 ### Wallpaper Management
@@ -171,21 +155,33 @@ ln -sf ~/dotfiles/home/.zshrc ~/.zshrc
 # Random wallpaper
 ~/dotfiles/config/hypr/scripts/wallpaper.sh
 
-# Select with rofi
+# Select wallpaper with rofi preview
 ~/dotfiles/config/hypr/scripts/wallpaper.sh select
 
-# Init (load last wallpaper)
+# Change color scheme only (keeps current wallpaper)
+~/dotfiles/config/hypr/scripts/wallpaper.sh scheme
+
+# Init (load last wallpaper on startup)
 ~/dotfiles/config/hypr/scripts/wallpaper.sh init
 ```
 
 Changing wallpaper automatically:
 
 1. Generates Material You color scheme via Matugen
-2. Updates Neovim theme (auto-reloads in all instances)
-3. Reloads Waybar
-4. Sets SDDM background
-5. Updates terminal colors
-6. Applies colors to GTK applications
+2. Reloads Waybar
+3. Sets SDDM background
+4. Updates terminal colors
+5. Applies colors to GTK applications
+
+### Key Bindings
+
+| Key | Action |
+|-----|--------|
+| `Super + Ctrl + W` | Select wallpaper |
+| `Super + Shift + W` | Change color scheme |
+| `Super + Shift + B` | Restart Waybar |
+| `Alt + Space` | App launcher (Rofi) |
+| `Super + V` | Clipboard history |
 
 ## Contributing
 
