@@ -4,10 +4,10 @@ Personal configuration files for Arch Linux with Hyprland.
 
 ## Preview
 
-|                                 |                           |
-| ------------------------------- | ------------------------- |
-| ![Desktop](.github/desktop.png) | ![Rofi](.github/rofi.png) |
-| ![Neovim](.github/neovim.png)   |
+|                                 |                                 |
+| ------------------------------- | ------------------------------- |
+| ![Desktop](.github/desktop.png) | ![Rofi](.github/rofi.png)       |
+| ![Neovim](.github/neovim.png)   | ![Wlogout](.github/wlogout.png) |
 
 ## Stack
 
