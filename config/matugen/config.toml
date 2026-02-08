@@ -8,7 +8,7 @@ gtk_theme = true
 [templates.kitty]
 input_path = '~/.config/matugen/templates/kitty-colors.conf'
 output_path = '~/dotfiles/config/kitty/colors.conf'
-post_hook = "killall -SIGUSR1 kitty &"
+post_hook = "pgrep -x kitty && killall -SIGUSR1 kitty &"
 
 [templates.waybar]
 input_path = '~/.config/matugen/templates/colors.css'
@@ -33,7 +33,7 @@ output_path = '~/.cache/hyprlock-colors.conf'
 [templates.swaync]
 input_path = '~/.config/matugen/templates/swaync-style.css'
 output_path = '~/dotfiles/config/swaync/style.css'
-post_hook = "swaync-client -rs && swaync-client -R &"
+post_hook = "pgrep -x swaync && swaync-client -rs && swaync-client -R &"
 
 [templates.gtk3-colors]
 input_path = '~/.config/matugen/templates/gtk-3.0-colors.css'
@@ -52,7 +52,7 @@ output_path = '~/.cache/telegram-material-you.tdesktop-theme'
 [templates.colors-hyprland]
 input_path = '~/.config/matugen/templates/colors-hyprland.conf'
 output_path = '~/.cache/colors-hyprland.conf'
-post_hook = "hyprctl reload"
+post_hook = "command -v hyprctl && hyprctl reload || true"
 
 [templates.btop]
 input_path = '~/.config/matugen/templates/btop.theme'
