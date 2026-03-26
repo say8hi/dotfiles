@@ -46,3 +46,4 @@ alias dclg='docker-compose logs -f'
 
 # nvim
 alias v='nvim'
+

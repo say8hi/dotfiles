@@ -101,3 +101,11 @@ if [[ -o interactive ]] && [[ -z "${SSH_CONNECTION}" ]] && command -v fastfetch 
     fastfetch
 fi
 
+export PATH="$HOME/.npm-global/bin:$PATH"
+
+# bun completions
+[ -s "/home/say8hi/.bun/_bun" ] && source "/home/say8hi/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
