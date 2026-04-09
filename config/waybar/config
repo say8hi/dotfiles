@@ -53,7 +53,7 @@
 		    "on-click": "pavucontrol",
 		    "on-click-right": "amixer sset Master toggle 1>/dev/null",
 		    "format": "{icon}  {volume}%",
-		    "format-muted": "  Muted",
+		    "format-muted": "  Muted",
 		    "format-icons": {
 		        "headphone": " ",
 		        "hands-free": " ",
