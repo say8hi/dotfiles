@@ -247,4 +247,13 @@ function M.select_theme()
     :find()
 end
 
+-- Watch matugen.lua for changes and reload theme automatically
+local matugen_file = vim.fn.stdpath("config") .. "/lua/colors/matugen.lua"
+local _matugen_watcher = vim.uv.new_fs_event()
+_matugen_watcher:start(matugen_file, {}, vim.schedule_wrap(function(err)
+  if not err and vim.g.colors_name == "matugen" then
+    M.switch_theme("matugen")
+  end
+end))
+
 return M

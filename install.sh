@@ -720,6 +720,24 @@ EOF
     fi
 }
 
+setup_icons() {
+    print_header "Setting up icon theme"
+
+    if ! command_exists papirus-folders; then
+        if command_exists yay; then
+            yay -S --needed --noconfirm papirus-folders-git \
+                || { print_warning "Failed to install papirus-folders"; return 0; }
+        else
+            print_warning "yay not found, skipping papirus-folders"
+            return 0
+        fi
+    fi
+
+    papirus-folders -C black --theme Papirus-Dark \
+        && print_success "Papirus-Dark folder color set to black" \
+        || print_warning "papirus-folders failed"
+}
+
 generate_gtk_bookmarks() {
     print_header "Generating GTK bookmarks"
 
@@ -797,10 +815,11 @@ main() {
     create_symlinks
     setup_local_config
     setup_wallpaper_dir
-    setup_sddm
     install_shell_plugins
     install_optional_packages
+    setup_sddm
     install_optional_components
+    setup_icons
     generate_initial_colors
     generate_gtk_bookmarks
     set_default_shell
