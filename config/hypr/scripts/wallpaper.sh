@@ -160,11 +160,6 @@ if [ "$1" == "init" ] ;then
 else
     sleep 1
     notify-send "Wallpaper" "Applying $newwall..." -h int:value:10 -h string:x-canonical-private-synchronous:wallpaper
-
-    # -----------------------------------------------------
-    # Reload Hyprctl.sh
-    # -----------------------------------------------------
-    $HOME/.config/ml4w-hyprland-settings/hyprctl.sh &
 fi
 
 # -----------------------------------------------------

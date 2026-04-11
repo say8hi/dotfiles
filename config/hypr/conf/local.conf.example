@@ -4,6 +4,3 @@
 # Crypto API key for waybar-crypto
 # Get your free API key at https://coinmarketcap.com/api/
 env = COINMARKETCAP_API_KEY,your-api-key-here
-
-# Uncomment for desktop with hyprsplit plugin:
-# source = ~/dotfiles/config/hypr/conf/hyprsplit.conf
