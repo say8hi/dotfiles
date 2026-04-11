@@ -120,16 +120,16 @@ newwall=$(echo $wallpaper | sed "s|$HOME/wallpaper/||g")
 # -----------------------------------------------------
 # Set the new wallpaper
 # -----------------------------------------------------
-# Random transition type for swww
+# Random transition type for awww
 transition_types=("simple" "fade" "left" "right" "top" "bottom" "wipe" "wave" "grow" "center" "outer")
 transition_type="${transition_types[$RANDOM % ${#transition_types[@]}]}"
 
-if [ "$WALLPAPER_ENGINE" == "swww" ] ;then
-    # swww
-    echo ":: Using swww with transition: $transition_type"
+if [ "$WALLPAPER_ENGINE" == "awww" ] ;then
+    # awww
+    echo ":: Using awww with transition: $transition_type"
     # Get all connected monitors
     monitors=$(hyprctl monitors -j | jq -r '.[].name' | tr '\n' ',' | sed 's/,$//')
-    swww img $wallpaper \
+    awww img $wallpaper \
         --outputs "$monitors" \
         --transition-bezier .43,1.19,1,.4 \
         --transition-fps=60 \

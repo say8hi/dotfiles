@@ -13,14 +13,14 @@ wallpaper_engine="${WALLPAPER_ENGINE:-hyprpaper}"
 print_info "Initializing wallpaper engine: ${wallpaper_engine}"
 
 case "${wallpaper_engine}" in
-    "swww")
-        if command_exists swww; then
-            print_info "Starting swww daemon..."
-            swww init
-            swww-daemon --format xrgb &
+    "awww")
+        if command_exists awww; then
+            print_info "Starting awww daemon..."
+            awww init
+            awww-daemon --format xrgb &
             sleep 0.5
         else
-            print_error "swww not found, falling back to hyprpaper"
+            print_error "awww not found, falling back to hyprpaper"
             wallpaper_engine="hyprpaper"
         fi
         ;;

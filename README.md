@@ -33,7 +33,7 @@ Personal configuration files for Arch Linux with Hyprland.
 - **Notifications**: [SwayNC](https://github.com/ErikReider/SwayNotificationCenter)
 - **Colors**: [Matugen](https://github.com/InioX/matugen) - Material You color generation from wallpaper
 - **Display Manager**: SDDM with Silent theme
-- **Wallpaper Engine**: [swww](https://github.com/Horus645/swww) - Animated wallpaper daemon
+- **Wallpaper Engine**: [awww](https://github.com/Horus645/swww) - Animated wallpaper daemon
 
 ## Structure
 
@@ -113,7 +113,7 @@ Full package lists are defined in `lib/packages.conf`. Key packages:
 **Core:**
 
 ```bash
-hyprland waybar kitty rofi neovim matugen-bin swww swaync wlogout
+hyprland waybar kitty rofi neovim matugen-bin awww swaync wlogout
 grim slurp wl-clipboard jq cliphist pipewire wireplumber
 ttf-firacode-nerd noto-fonts-cjk noto-fonts-emoji
 ```

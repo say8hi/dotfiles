@@ -689,15 +689,15 @@ generate_initial_colors() {
 
     # Apply wallpaper if Hyprland is running
     if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-        if command_exists swww; then
-            # Ensure swww-daemon is running
-            if ! pgrep -x swww-daemon > /dev/null; then
-                swww-daemon > /dev/null 2>&1 &
+        if command_exists awww; then
+            # Ensure awww-daemon is running
+            if ! pgrep -x awww-daemon > /dev/null; then
+                awww-daemon > /dev/null 2>&1 &
                 disown
                 sleep 1
             fi
-            swww img "${wallpaper}" --transition-type fade --transition-duration 1 2>/dev/null \
-                && print_success "Wallpaper applied via swww"
+            awww img "${wallpaper}" --transition-type fade --transition-duration 1 2>/dev/null \
+                && print_success "Wallpaper applied via awww"
         elif command_exists hyprpaper; then
             local hyprpaper_conf="${HOME}/.config/hypr/hyprpaper.conf"
             cat > "${hyprpaper_conf}" <<EOF
@@ -710,7 +710,7 @@ EOF
             disown
             print_success "Wallpaper applied via hyprpaper"
         else
-            print_warning "No wallpaper engine found (swww or hyprpaper)"
+            print_warning "No wallpaper engine found (awww or hyprpaper)"
         fi
     fi
 }
