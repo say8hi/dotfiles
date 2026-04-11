@@ -1,6 +1,26 @@
 -- Tokyo Night theme for mini.base16
 
 local base16 = require "mini.base16"
+local shared = require "colors._shared"
+
+local bufferline_palette = {
+  bg          = "#1f2335",
+  bg_sel      = "#1a1b26",
+  fill        = "#13141e",
+  fg_inactive = "#787c99",
+  fg_visible  = "#a9b1d6",
+  fg_selected = "#c0caf5",
+  modified    = "#e0af68",
+  warning     = "#e0af68",
+  error       = "#f7768e",
+}
+
+local diff_palette = {
+  add    = { bg = "#1e3a2f", fg = "#9ece6a" },
+  delete = { bg = "#3b1e28", fg = "#f7768e" },
+  change = { bg = "#1e2d45" },
+  text   = { bg = "#2a3f6a" },
+}
 
 -- Base16 palette based on Tokyo Night
 local palette = {
@@ -91,15 +111,31 @@ local function apply_custom_highlights()
   vim.api.nvim_set_hl(0, "Repeat", { fg = colors.purple })
   vim.api.nvim_set_hl(0, "Define", { fg = colors.blue })
 
+  shared.apply_bufferline(bufferline_palette)
+  shared.apply_diff(diff_palette)
+
   -- Telescope custom
   vim.api.nvim_set_hl(0, "TelescopeSelection", { bg = colors.one_bg, fg = colors.blue })
 end
 
+local function fix_devicons() shared.fix_bufferline_devicons(bufferline_palette) end
+
 apply_custom_highlights()
+fix_devicons()
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
-  callback = apply_custom_highlights,
+  callback = function()
+    apply_custom_highlights()
+    fix_devicons()
+  end,
+})
+
+-- fix devicons after bufferline initializes and on each new buffer
+vim.api.nvim_create_autocmd({ "UIEnter", "BufAdd" }, {
+  callback = function()
+    vim.schedule(fix_devicons)
+  end,
 })
 
 return {

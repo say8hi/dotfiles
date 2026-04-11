@@ -80,6 +80,18 @@ autocmd("BufReadPost", {
   end,
 })
 
+-- claudecode: ensure diff buffers open in normal mode and prevent insert mode on <leader>a timeout
+autocmd("BufEnter", {
+  callback = function()
+    if vim.b.claudecode_diff_tab_name then
+      if vim.fn.mode() ~= "n" then
+        vim.cmd "stopinsert"
+      end
+      vim.keymap.set("n", "<leader>a", "<nop>", { buffer = true, silent = true })
+    end
+  end,
+})
+
 -- ufo folding compatibility - ensure fold settings are set correctly
 autocmd("FileType", {
   pattern = "*",

@@ -3,6 +3,6 @@
 local M = {}
 
 -- Theme selection
-M.theme = "matugen"
+M.theme = "autumn"
 
 return M

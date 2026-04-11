@@ -15,6 +15,7 @@ vim.api.nvim_create_user_command("MasonInstallAll", function()
     "json-lsp",
     "lua-language-server",
     "rust-analyzer",
+    "nomicfoundation-solidity-language-server",
     "stylua",
     "gofumpt",
     "goimports-reviser",

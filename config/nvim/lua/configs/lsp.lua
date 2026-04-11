@@ -220,7 +220,13 @@ vim.lsp.config.rust_analyzer = make_config(
   }
 )
 
-local servers = { "gopls", "ruff", "pyright", "jsonls", "ts_ls", "html", "cssls", "sqls", "lua_ls", "rust_analyzer" }
+vim.lsp.config.solidity_ls_nomicfoundation = make_config(
+  { "nomicfoundation-solidity-language-server", "--stdio" },
+  { "solidity" },
+  { "foundry.toml", "hardhat.config.js", "hardhat.config.ts", ".git" }
+)
+
+local servers = { "gopls", "ruff", "pyright", "jsonls", "ts_ls", "html", "cssls", "sqls", "lua_ls", "rust_analyzer", "solidity_ls_nomicfoundation" }
 for _, server in ipairs(servers) do
   vim.lsp.enable(server)
 end

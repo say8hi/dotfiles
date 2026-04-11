@@ -1,5 +1,13 @@
 return {
   {
+    "Wansmer/langmapper.nvim",
+    lazy = false,
+    priority = 1001, -- load before other plugins
+    opts = {
+      hack_keymap = true,
+    },
+  },
+  {
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
@@ -278,13 +286,7 @@ return {
     "kylechui/nvim-surround",
     version = "*",
     event = { "BufReadPost", "BufNewFile" },
-    config = function()
-      require("nvim-surround").setup {
-        keymaps = {
-          visual = "S",
-        },
-      }
-    end,
+    opts = {},
   },
   {
     "nvim-telescope/telescope.nvim",
@@ -729,6 +731,11 @@ return {
     opts = {
       preset = "modern",
       delay = 500,
+      filter = function(map)
+        -- hide mappings with non-ASCII bytes (e.g. Cyrillic duplicates
+        -- that langmapper auto-generates via hack_keymap)
+        return not map.lhs:match "[\128-\255]"
+      end,
     },
     keys = {
       {
@@ -787,8 +794,16 @@ return {
         offsets = {
           {
             filetype = "NvimTree",
-            text = "File Explorer",
+            text = function()
+              local api = require "nvim-tree.api"
+              local root = api.tree.get_nodes().absolute_path
+              if root then
+                return vim.fn.fnamemodify(root, ":~")
+              end
+              return ""
+            end,
             text_align = "center",
+            highlight = "Title",
             separator = true,
           },
         },
@@ -799,7 +814,7 @@ return {
         show_tab_indicators = true,
         show_duplicate_prefix = true,
         persist_buffer_sort = true,
-        separator_style = "thin",
+        separator_style = "slant",
         enforce_regular_tabs = false,
         always_show_bufferline = true,
         hover = {

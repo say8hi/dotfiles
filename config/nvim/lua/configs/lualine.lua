@@ -114,7 +114,7 @@ function M.get_config()
     tabline = {},
     winbar = {},
     inactive_winbar = {},
-    extensions = { "nvim-tree", "lazy", "mason", "trouble", "nvim-dap-ui" },
+    extensions = { "lazy", "mason", "trouble", "nvim-dap-ui" },
   }
 end
 

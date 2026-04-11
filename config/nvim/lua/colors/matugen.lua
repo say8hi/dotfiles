@@ -1,6 +1,14 @@
 -- Matugen theme for mini.base16
 
 local base16 = require('mini.base16')
+local shared = require('colors._shared')
+
+local diff_palette = {
+  add    = { bg = '#705c73', fg = '#ffffff' },
+  delete = { bg = '#93000a', fg = '#ffdad6' },
+  change = { bg = '#536478' },
+  text   = { bg = '#414750' },
+}
 
 -- Base16 palette from matugen
 local palette = {
@@ -90,6 +98,8 @@ local function apply_custom_highlights()
   vim.api.nvim_set_hl(0, 'StorageClass', { fg = colors.purple })
   vim.api.nvim_set_hl(0, 'Repeat', { fg = colors.purple })
   vim.api.nvim_set_hl(0, 'Define', { fg = colors.blue })
+
+  shared.apply_diff(diff_palette)
 
   -- Telescope custom
   vim.api.nvim_set_hl(0, 'TelescopeSelection', { bg = colors.one_bg, fg = colors.blue })

@@ -11,6 +11,7 @@ local options = {
     markdown = { "prettier" },
     lua = { "stylua" },
     rust = { "rustfmt" },
+    solidity = { "forge_fmt" },
     -- sql formatting will use LSP (sqls) via lsp_fallback
   },
   formatters = {

@@ -11,7 +11,8 @@ local function get_available_themes()
   local files = vim.fn.readdir(colors_dir)
 
   for _, file in ipairs(files) do
-    if file:match("%.lua$") then
+    -- Skip helper modules (files starting with "_")
+    if file:match("%.lua$") and not file:match("^_") then
       local theme_name = file:gsub("%.lua$", "")
       table.insert(themes, theme_name)
     end

@@ -1,6 +1,26 @@
 -- Matugen theme for mini.base16
 
 local base16 = require('mini.base16')
+local shared = require('colors._shared')
+
+local bufferline_palette = {
+  bg          = "#201c19",
+  bg_sel      = "#141210",
+  fill        = "#0e0c0b",
+  fg_inactive = "#7a6e66",
+  fg_visible  = "#d1c4b8",
+  fg_selected = "#f2eeeb",
+  modified    = "#d6c4af",
+  warning     = "#c5ab8d",
+  error       = "#ffb4ab",
+}
+
+local diff_palette = {
+  add    = { bg = "#242b19", fg = "#c3cb9f" },
+  delete = { bg = "#321d1a", fg = "#ffb4ab" },
+  change = { bg = "#2b2419" },
+  text   = { bg = "#3d3220" },
+}
 
 -- Base16 palette from matugen
 local palette = {
@@ -31,7 +51,7 @@ base16.setup({
   },
 })
 
-vim.g.colors_name = 'matugen'
+vim.g.colors_name = 'autumn'
 
 -- Custom highlight colors
 local colors = {
@@ -91,15 +111,31 @@ local function apply_custom_highlights()
   vim.api.nvim_set_hl(0, 'Repeat', { fg = colors.purple })
   vim.api.nvim_set_hl(0, 'Define', { fg = colors.blue })
 
+  shared.apply_bufferline(bufferline_palette)
+  shared.apply_diff(diff_palette)
+
   -- Telescope custom
   vim.api.nvim_set_hl(0, 'TelescopeSelection', { bg = colors.one_bg, fg = colors.blue })
 end
 
+local function fix_devicons() shared.fix_bufferline_devicons(bufferline_palette) end
+
 apply_custom_highlights()
+fix_devicons()
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
-  callback = apply_custom_highlights,
+  callback = function()
+    apply_custom_highlights()
+    fix_devicons()
+  end,
+})
+
+-- fix devicons after bufferline initializes and on each new buffer
+vim.api.nvim_create_autocmd({ "UIEnter", "BufAdd" }, {
+  callback = function()
+    vim.schedule(fix_devicons)
+  end,
 })
 
 return {
