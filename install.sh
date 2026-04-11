@@ -57,10 +57,36 @@ ask_confirmation() {
     [[ "${response}" =~ ^[Yy]$ ]]
 }
 
+# Install an optional tool via yay. Optionally runs a post-install hook
+# (name of a shell function) after a successful install.
+# Usage: install_optional_tool NAME "pkg1 pkg2" [post_hook_fn]
+install_optional_tool() {
+    local name="$1"
+    local pkgs="$2"
+    local post_hook="${3:-}"
+
+    if ! command_exists yay; then
+        print_warning "yay not found, please install ${name} manually: yay -S ${pkgs}"
+        return 1
+    fi
+
+    # shellcheck disable=SC2086
+    if yay -S --noconfirm ${pkgs}; then
+        print_success "${name} installed successfully"
+        if [[ -n "${post_hook}" ]] && declare -F "${post_hook}" >/dev/null; then
+            "${post_hook}"
+        fi
+        return 0
+    fi
+
+    print_error "${name} installation failed"
+    return 1
+}
+
 cleanup() {
     if [[ -n "${BACKUP_DIR:-}" ]] && [[ -d "${BACKUP_DIR}" ]]; then
         if [[ -z "$(ls -A "${BACKUP_DIR}" 2>/dev/null)" ]]; then
-            rm -f -r "${BACKUP_DIR}"
+            rm -rf "${BACKUP_DIR}"
             log "Removed empty backup directory"
         fi
     fi
@@ -528,7 +554,7 @@ install_optional_components() {
     echo ""
 
     # Miniconda
-    if [[ ! -d "/opt/miniconda3" ]] && [[ ! -f "${HOME}/miniconda3/bin/conda" ]]; then
+    if [[ ! -f "${HOME}/miniconda3/bin/conda" ]]; then
         if ask_confirmation "Install Miniconda? (Python package manager)"; then
             print_header "Installing Miniconda"
             local tmp_dir
@@ -537,40 +563,43 @@ install_optional_components() {
                 return 1
             }
 
-            # Download Miniconda installer
-            if curl -L -o "${tmp_dir}/miniconda.sh" https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh; then
-                chmod +x "${tmp_dir}/miniconda.sh"
+            local miniconda_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+            local installer="${tmp_dir}/miniconda.sh"
 
-                # Ask for installation location
-                echo ""
-                echo "Choose installation location:"
-                echo "  1) /opt/miniconda3 (system-wide, requires sudo)"
-                echo "  2) ~/miniconda3 (user-local)"
-                read -rp "$(echo -e "${YELLOW}?${NC}") Select location (1/2): " conda_location
-
-                if [[ "${conda_location}" == "1" ]]; then
-                    if sudo bash "${tmp_dir}/miniconda.sh" -b -p /opt/miniconda3; then
-                        sudo chown -R "${USER}:${USER}" /opt/miniconda3
-                        print_success "Miniconda installed to /opt/miniconda3"
-                    else
-                        print_error "Miniconda installation failed"
-                    fi
-                elif [[ "${conda_location}" == "2" ]]; then
-                    if bash "${tmp_dir}/miniconda.sh" -b -p "${HOME}/miniconda3"; then
-                        print_success "Miniconda installed to ~/miniconda3"
-                        print_success "conda.zsh will auto-detect ~/miniconda3"
-                    else
-                        print_error "Miniconda installation failed"
-                    fi
-                else
-                    print_warning "Invalid selection, skipping Miniconda installation"
-                fi
-
-                rm -rf "${tmp_dir}"
-            else
+            # Download installer and published SHA256
+            if ! curl -fsSL -o "${installer}" "${miniconda_url}"; then
                 print_error "Failed to download Miniconda installer"
                 rm -rf "${tmp_dir}"
+                return 1
             fi
+
+            if ! curl -fsSL -o "${installer}.sha256" "${miniconda_url}.sha256"; then
+                print_error "Failed to download Miniconda checksum"
+                rm -rf "${tmp_dir}"
+                return 1
+            fi
+
+            # Verify checksum (file format: "<hash>  Miniconda3-latest-Linux-x86_64.sh")
+            local expected_sum actual_sum
+            expected_sum=$(awk '{print $1}' "${installer}.sha256")
+            actual_sum=$(sha256sum "${installer}" | awk '{print $1}')
+            if [[ "${expected_sum}" != "${actual_sum}" ]]; then
+                print_error "Miniconda checksum mismatch"
+                print_error "  expected: ${expected_sum}"
+                print_error "  actual:   ${actual_sum}"
+                rm -rf "${tmp_dir}"
+                return 1
+            fi
+            print_success "Miniconda checksum verified"
+
+            if bash "${installer}" -b -p "${HOME}/miniconda3"; then
+                print_success "Miniconda installed to ~/miniconda3"
+                print_success "conda.zsh will auto-detect ~/miniconda3"
+            else
+                print_error "Miniconda installation failed"
+            fi
+
+            rm -rf "${tmp_dir}"
         fi
     else
         print_success "Miniconda already installed"
@@ -579,47 +608,34 @@ install_optional_components() {
     # Go
     if ! command_exists go; then
         if ask_confirmation "Install Go? (yay -S go)"; then
-            if command_exists yay; then
-                yay -S --noconfirm go && {
-                    print_success "Go installed successfully"
-                } || {
-                    print_error "Go installation failed"
-                }
-            else
-                print_warning "yay not found, please install Go manually: yay -S go"
-            fi
+            install_optional_tool "Go" "go"
         fi
     else
         print_success "Go already installed"
     fi
 
     # Docker
+    docker_post_install() {
+        if ask_confirmation "Add current user to docker group?"; then
+            if sudo usermod -aG docker "${USER}"; then
+                print_success "User added to docker group"
+                print_warning "Logout and login again for group changes to take effect"
+            else
+                print_error "Failed to add user to docker group"
+            fi
+        fi
+        if ask_confirmation "Enable Docker service?"; then
+            if sudo systemctl enable docker; then
+                print_success "Docker service enabled"
+            else
+                print_error "Failed to enable Docker service"
+            fi
+        fi
+    }
+
     if ! command_exists docker; then
         if ask_confirmation "Install Docker? (yay -S docker docker-compose)"; then
-            if command_exists yay; then
-                yay -S --noconfirm docker docker-compose && {
-                    print_success "Docker installed successfully"
-                    if ask_confirmation "Add current user to docker group?"; then
-                        sudo usermod -aG docker "${USER}" && {
-                            print_success "User added to docker group"
-                            print_warning "Logout and login again for group changes to take effect"
-                        } || {
-                            print_error "Failed to add user to docker group"
-                        }
-                    fi
-                    if ask_confirmation "Enable Docker service?"; then
-                        sudo systemctl enable docker && {
-                            print_success "Docker service enabled"
-                        } || {
-                            print_error "Failed to enable Docker service"
-                        }
-                    fi
-                } || {
-                    print_error "Docker installation failed"
-                }
-            else
-                print_warning "yay not found, please install Docker manually: yay -S docker docker-compose"
-            fi
+            install_optional_tool "Docker" "docker docker-compose" docker_post_install
         fi
     else
         print_success "Docker already installed"
@@ -628,15 +644,7 @@ install_optional_components() {
     # Node.js/npm
     if ! command_exists node; then
         if ask_confirmation "Install Node.js? (yay -S nodejs npm)"; then
-            if command_exists yay; then
-                yay -S --noconfirm nodejs npm && {
-                    print_success "Node.js installed successfully"
-                } || {
-                    print_error "Node.js installation failed"
-                }
-            else
-                print_warning "yay not found, please install Node.js manually: yay -S nodejs npm"
-            fi
+            install_optional_tool "Node.js" "nodejs npm"
         fi
     else
         print_success "Node.js already installed"
