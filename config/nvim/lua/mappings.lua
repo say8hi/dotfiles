@@ -11,7 +11,7 @@ map("i", "<C-k>", "<Up>", { desc = "move up" })
 -- Quick escape
 map("i", "jk", "<ESC>")
 map("i", "<C-CR>", function()
-  local enter = require("scripts.smart_enter")
+  local enter = require "scripts.smart_enter"
   enter.enter_inside_quotes()
 end, { desc = "Magic enter" })
 
@@ -29,12 +29,12 @@ map("n", "<C-s>", "<cmd>w<CR>", { desc = "save file" })
 map("n", "<C-c>", "<cmd>%y+<CR>", { desc = "copy whole file" })
 map("n", ";", ":", { desc = "CMD enter command mode" })
 
--- Toggle line numbers
-map("n", "<leader>n", "<cmd>set nu!<CR>", { desc = "toggle line number" })
-map("n", "<leader>rn", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
+-- UI toggles
+map("n", "<leader>un", "<cmd>set nu!<CR>", { desc = "toggle line number" })
+map("n", "<leader>uN", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
 
--- Format file
-map({ "n", "x" }, "<leader>fm", function()
+-- Format file (conform with LSP fallback)
+map({ "n", "x" }, "<leader>lf", function()
   require("conform").format { lsp_fallback = true }
 end, { desc = "format file" })
 
@@ -53,10 +53,16 @@ map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", { desc = "help page" })
 map("n", "<leader>ma", "<cmd>Telescope marks<CR>", { desc = "find marks" })
 map("n", "<leader>fo", "<cmd>Telescope oldfiles<CR>", { desc = "find oldfiles" })
 map("n", "<leader>fz", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "find in buffer" })
-map("n", "<leader>cm", "<cmd>Telescope git_commits<CR>", { desc = "git commits" })
-map("n", "<leader>gt", "<cmd>Telescope git_status<CR>", { desc = "git status" })
+map("n", "<leader>gc", "<cmd>Telescope git_commits<CR>", { desc = "git commits" })
+map("n", "<leader>gs", "<cmd>Telescope git_status<CR>", { desc = "git status" })
 map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "find files" })
-map("n", "<leader>fa", "<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>", { desc = "find all files" })
+map("n", "<leader>fk", "<cmd>Telescope keymaps<cr>", { desc = "find keymaps" })
+map(
+  "n",
+  "<leader>fa",
+  "<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>",
+  { desc = "find all files" }
+)
 
 -- Git (gitsigns - applied on BufEnter for git files)
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
@@ -128,25 +134,22 @@ vim.api.nvim_create_autocmd("LspAttach", {
     lsp_map("n", "gsd", ":vsplit<CR>:lua vim.lsp.buf.definition()<CR>", "Definition in vsplit")
     lsp_map("n", "K", vim.lsp.buf.hover, "Hover documentation")
     lsp_map("n", "gi", function()
-      require('telescope.builtin').lsp_implementations()
+      require("telescope.builtin").lsp_implementations()
     end, "Go to implementation")
-    lsp_map("n", "gK", vim.lsp.buf.signature_help, "Signature help")  -- Changed from <C-k> to avoid conflict with window navigation
+    lsp_map("n", "gK", vim.lsp.buf.signature_help, "Signature help") -- Changed from <C-k> to avoid conflict with window navigation
     lsp_map("n", "gr", function()
-      require('telescope.builtin').lsp_references()
+      require("telescope.builtin").lsp_references()
     end, "Show references")
-    lsp_map("n", "<leader>D", vim.lsp.buf.type_definition, "Go to type definition")
+    lsp_map("n", "<leader>lD", vim.lsp.buf.type_definition, "Go to type definition")
 
     -- Actions
-    lsp_map("n", "<leader>ra", vim.lsp.buf.rename, "Rename symbol")
-    lsp_map("n", "<leader>ca", vim.lsp.buf.code_action, "Code action")
-    lsp_map("n", "<leader>f", function()
-      vim.lsp.buf.format { async = true }
-    end, "Format buffer")
+    lsp_map("n", "<leader>lr", vim.lsp.buf.rename, "Rename symbol")
+    lsp_map("n", "<leader>la", vim.lsp.buf.code_action, "Code action")
 
     -- Workspace
-    lsp_map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, "Add workspace folder")
-    lsp_map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, "Remove workspace folder")
-    lsp_map("n", "<leader>wl", function()
+    lsp_map("n", "<leader>lwa", vim.lsp.buf.add_workspace_folder, "Add workspace folder")
+    lsp_map("n", "<leader>lwr", vim.lsp.buf.remove_workspace_folder, "Remove workspace folder")
+    lsp_map("n", "<leader>lwl", function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, "List workspace folders")
 
@@ -165,56 +168,50 @@ map("n", "zM", function()
   require("ufo").closeAllFolds()
 end, { desc = "Close all folds" })
 
--- Go specific
-map("n", "<leader>gj", "<cmd>GoTagAdd json<CR>", { desc = "Add JSON tags" })
-map("n", "ga", "<cmd>GoIfErr<CR>", { desc = "if err != nil {}" })
-
 -- Debug
-map("n", "<leader>dgt",
-      function()
-        require('dap-go').debug_test()
-      end,
- { desc = "Debug go test" })
+map("n", "<leader>dgt", function()
+  require("dap-go").debug_test()
+end, { desc = "Debug go test" })
 
-
-map("n", "<leader>dgl",
-      function()
-        require('dap-go').debug_last()
-      end,
- { desc = "Debug last go test" })
-
+map("n", "<leader>dgl", function()
+  require("dap-go").debug_last()
+end, { desc = "Debug last go test" })
 
 map("n", "<leader>db", "<cmd> DapToggleBreakpoint <CR>", { desc = "Add breakpoint at line" })
-map("n", "<leader>dus",
-      function ()
-        local widgets = require('dap.ui.widgets');
-        local sidebar = widgets.sidebar(widgets.scopes);
-        sidebar.open();
-      end,
-{ desc = "Open debugging sidebar" })
+map("n", "<leader>dus", function()
+  local widgets = require "dap.ui.widgets"
+  local sidebar = widgets.sidebar(widgets.scopes)
+  sidebar.open()
+end, { desc = "Open debugging sidebar" })
 
-
-map("n", "dn", "<cmd> DapStepOver <CR>", { desc = "DAP Next step" })
-map("n", "<leader>dc", function() require('dap').continue() end, { desc = "Debug" })
+map("n", "<leader>dn", "<cmd>DapStepOver<CR>", { desc = "DAP Next step" })
+map("n", "<leader>dc", function()
+  require("dap").continue()
+end, { desc = "Debug" })
 
 map("n", "n", "nzzzv", { desc = "centered move to the next find" })
 map("n", "N", "Nzzzv", { desc = "centered move to the next find" })
 
-map("n", "<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>", { desc = "centered move to the next find" })
+map(
+  "n",
+  "<leader>s",
+  ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>",
+  { desc = "centered move to the next find" }
+)
 
-map("n", "<leader>ds", '<cmd>Telescope diagnostics<CR>', { desc = "LSP diagnostic loclist" })
+map("n", "<leader>ld", "<cmd>Telescope diagnostics<CR>", { desc = "LSP diagnostic loclist" })
 
 -- Visual
 map("v", "<S-down>", ":m '>+1<CR>gv=gv", { desc = "move selected down" })
 map("v", "<S-up>", ":m '<-2<CR>gv=gv", { desc = "move selected up" })
 
-map("v", "p", "\"_dP", { desc = "paste without copying" })
-map("v", "c", "\"_c", { desc = "c without copying" })
+map("v", "p", '"_dP', { desc = "paste without copying" })
+map("v", "c", '"_c', { desc = "c without copying" })
 
 -- Vim Visual Multi
 vim.g.VM_maps = {
-  ['Find Under'] = '<C-b>',
-  ['Find Subword Under'] = '<C-b>',
+  ["Find Under"] = "<C-b>",
+  ["Find Subword Under"] = "<C-b>",
 }
 
 -- Bufferline navigation
@@ -274,6 +271,6 @@ map("n", "<leader>wk", function()
 end, { desc = "whichkey query lookup" })
 
 -- Theme Switcher
-map("n", "<leader>th", function()
+map("n", "<leader>uT", function()
   require("scripts.theme_switcher").select_theme()
 end, { desc = "switch theme" })

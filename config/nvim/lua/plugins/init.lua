@@ -28,14 +28,14 @@ return {
     },
     keys = {
       {
-        "<leader>un",
+        "<leader>ud",
         function()
           require("snacks").notifier.hide()
         end,
         desc = "Dismiss all notifications",
       },
       {
-        "<leader>nh",
+        "<leader>uh",
         function()
           require("snacks").notifier.show_history()
         end,
@@ -305,7 +305,7 @@ return {
     },
     keys = {
       {
-        "<leader>u",
+        "<leader>fu",
         "<cmd>Telescope undo<cr>",
         desc = "Undo history",
       },
@@ -404,7 +404,7 @@ return {
     "ThePrimeagen/harpoon",
     keys = {
       {
-        "<leader>ta",
+        "<leader>Ha",
         function()
           require("harpoon.mark").add_file()
         end,
@@ -453,8 +453,8 @@ return {
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
     keys = {
-      { "<leader>dv", "<cmd>DiffviewOpen<cr>", desc = "Open Diffview" },
-      { "<leader>dx", "<cmd>DiffviewClose<cr>", desc = "Close Diffview" },
+      { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Open Diffview" },
+      { "<leader>gD", "<cmd>DiffviewClose<cr>", desc = "Close Diffview" },
     },
     config = true,
   },

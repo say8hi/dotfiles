@@ -455,7 +455,7 @@ setup_sddm() {
             print_success "Silent theme found"
         else
             print_warning "Silent theme not found at /usr/share/sddm/themes/silent"
-            echo "Install with: yay -S sddm-theme-silent"
+            echo "Install with: yay -S sddm-silent-theme"
         fi
 
         # Enable SDDM

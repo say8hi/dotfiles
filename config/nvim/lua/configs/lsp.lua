@@ -44,11 +44,23 @@ local function make_config(cmd, filetypes, root_markers, settings)
   return {
     cmd = cmd,
     filetypes = filetypes,
-    root_markers = root_markers,
     capabilities = capabilities,
     on_init = on_init,
     on_attach = on_attach,
     settings = settings,
+    -- reject non-file:// URIs (diffview://, fugitive://, etc.)
+    -- prevents gopls and other servers from receiving bad didOpen
+    root_dir = function(bufnr, on_dir)
+      local bufname = vim.api.nvim_buf_get_name(bufnr)
+      local scheme = bufname:match "^([%w+%-.]+)://"
+      if scheme and scheme ~= "file" then
+        return
+      end
+      local found = vim.fs.root(bufnr, root_markers)
+      if found then
+        on_dir(found)
+      end
+    end,
   }
 end
 

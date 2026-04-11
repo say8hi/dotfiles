@@ -22,7 +22,7 @@
   - [LSP](#lsp)
   - [Debugging](#debugging)
   - [Terminal](#terminal)
-  - [Utilities](#utilities)
+  - [UI Toggles & Utilities](#ui-toggles--utilities)
   - [Sessions](#sessions)
 - [Customization](#customization)
 - [Language Server Configuration](#language-server-configuration)
@@ -257,24 +257,32 @@ This will install all configured LSP servers, formatters, and linters:
 | `<leader>fb` | Normal | Find buffers            |
 | `<leader>fo` | Normal | Recent files            |
 | `<leader>fz` | Normal | Fuzzy find in buffer    |
+| `<leader>fh` | Normal | Help pages              |
+| `<leader>fk` | Normal | Find keymaps            |
 | `<leader>ft` | Normal | Find TODOs              |
-| `<leader>u`  | Normal | Undo history            |
+| `<leader>fu` | Normal | Undo history            |
+| `<leader>ma` | Normal | Marks                   |
 | `<leader>o`  | Normal | Clipboard history       |
 
 ### Git
 
-| Key          | Mode   | Description         |
-| ------------ | ------ | ------------------- |
-| `<leader>gg` | Normal | LazyGit             |
-| `<leader>cm` | Normal | Git commits         |
-| `<leader>gt` | Normal | Git status          |
-| `<leader>dv` | Normal | Diff view           |
-| `]c` / `[c`  | Normal | Next/Previous hunk  |
-| `<leader>hs` | Normal | Stage hunk          |
-| `<leader>hr` | Normal | Reset hunk          |
-| `<leader>hp` | Normal | Preview hunk        |
-| `<leader>hb` | Normal | Git blame           |
-| `<leader>hB` | Normal | Toggle inline blame |
+| Key          | Mode   | Description           |
+| ------------ | ------ | --------------------- |
+| `<leader>gg` | Normal | LazyGit               |
+| `<leader>gc` | Normal | Git commits           |
+| `<leader>gs` | Normal | Git status            |
+| `<leader>gd` | Normal | Open Diffview         |
+| `<leader>gD` | Normal | Close Diffview        |
+| `]c` / `[c`  | Normal | Next/Previous hunk    |
+| `<leader>hs` | Normal | Stage hunk            |
+| `<leader>hS` | Normal | Stage buffer          |
+| `<leader>hr` | Normal | Reset hunk            |
+| `<leader>hR` | Normal | Reset buffer          |
+| `<leader>hu` | Normal | Undo stage hunk       |
+| `<leader>hp` | Normal | Preview hunk          |
+| `<leader>hd` | Normal | Diff this             |
+| `<leader>hb` | Normal | Git blame line        |
+| `<leader>hB` | Normal | Toggle inline blame   |
 
 ### Git Conflicts
 
@@ -288,20 +296,24 @@ This will install all configured LSP servers, formatters, and linters:
 
 ### LSP
 
-| Key          | Mode   | Description              |
-| ------------ | ------ | ------------------------ |
-| `gd`         | Normal | Go to definition         |
-| `gD`         | Normal | Go to declaration        |
-| `gr`         | Normal | Show references          |
-| `gi`         | Normal | Go to implementation     |
-| `K`          | Normal | Hover documentation      |
-| `gK`         | Normal | Signature help           |
-| `<leader>D`  | Normal | Type definition          |
-| `<leader>ra` | Normal | Rename symbol            |
-| `<leader>ca` | Normal | Code action              |
-| `<leader>f`  | Normal | Format buffer            |
-| `gl`         | Normal | Line diagnostics         |
-| `]d` / `[d`  | Normal | Next/Previous diagnostic |
+| Key          | Mode        | Description              |
+| ------------ | ----------- | ------------------------ |
+| `gd`         | Normal      | Go to definition         |
+| `gD`         | Normal      | Go to declaration        |
+| `gsd`        | Normal      | Definition in vsplit     |
+| `gr`         | Normal      | Show references          |
+| `gi`         | Normal      | Go to implementation     |
+| `K`          | Normal      | Hover documentation      |
+| `gK`         | Normal      | Signature help           |
+| `<leader>lD` | Normal      | Type definition          |
+| `<leader>lr` | Normal      | Rename symbol            |
+| `<leader>la` | Normal      | Code action              |
+| `<leader>lf` | Normal/Vis. | Format file              |
+| `<leader>ld` | Normal      | Diagnostics list         |
+| `<leader>lo` | Normal      | Symbol outline (Aerial)  |
+| `gl`         | Normal      | Line diagnostics         |
+| `]d` / `[d`  | Normal      | Next/Previous diagnostic |
+| `{` / `}`    | Normal      | Prev/Next symbol         |
 
 ### Debugging
 
@@ -310,7 +322,7 @@ This will install all configured LSP servers, formatters, and linters:
 | `<leader>db`  | Normal | Toggle breakpoint    |
 | `<leader>dc`  | Normal | Continue/Start debug |
 | `<leader>du`  | Normal | Toggle DAP UI        |
-| `dn`          | Normal | Step over            |
+| `<leader>dn`  | Normal | Step over            |
 | `<leader>dgt` | Normal | Debug Go test        |
 
 ### Terminal
@@ -322,16 +334,19 @@ This will install all configured LSP servers, formatters, and linters:
 | `<A-i>` | Normal   | Floating terminal    |
 | `<C-x>` | Terminal | Escape terminal mode |
 
-### Utilities
+### UI Toggles & Utilities
 
-| Key          | Mode          | Description           |
-| ------------ | ------------- | --------------------- |
-| `<leader>th` | Normal        | Theme switcher        |
-| `<leader>ut` | Normal        | Undo tree             |
-| `<leader>n`  | Normal        | Toggle line numbers   |
-| `<leader>/`  | Normal/Visual | Toggle comment        |
-| `<leader>un` | Normal        | Dismiss notifications |
-| `<leader>nh` | Normal        | Notification history  |
+| Key          | Mode          | Description               |
+| ------------ | ------------- | ------------------------- |
+| `<leader>un` | Normal        | Toggle line numbers       |
+| `<leader>uN` | Normal        | Toggle relative numbers   |
+| `<leader>ut` | Normal        | Undo tree                 |
+| `<leader>uT` | Normal        | Theme switcher            |
+| `<leader>ud` | Normal        | Dismiss notifications     |
+| `<leader>uh` | Normal        | Notification history      |
+| `<leader>/`  | Normal/Visual | Toggle comment            |
+| `<leader>s`  | Normal        | Substitute word under cur |
+| `<leader>wK` | Normal        | WhichKey (all keymaps)    |
 
 ### Sessions
 
@@ -345,7 +360,7 @@ This will install all configured LSP servers, formatters, and linters:
 
 ### Change Theme
 
-1. Open theme switcher: `<leader>th`
+1. Open theme switcher: `<leader>uT`
 2. Preview themes with live updates
 3. Press Enter to apply
 
@@ -361,7 +376,7 @@ M.theme = "matugen"  -- or "tokyonight"
 
 1. Create a new file in `lua/colors/mytheme.lua`
 2. Define Base16 colors following the existing pattern
-3. Select it in :ThemeSwitch (`<leader>th`)
+3. Select it in :ThemeSwitch (`<leader>uT`)
 
 ### Modify Keybindings
 
