@@ -446,9 +446,14 @@ setup_sddm() {
             return 1
         fi
 
-        # Copy SDDM config (write directly to /etc/sddm.conf to avoid override)
-        sudo cp "${DOTFILES_DIR}/config/sddm/sddm.conf" /etc/sddm.conf || print_warning "Failed to copy SDDM config"
-        print_success "SDDM config installed"
+        # Install SDDM config as drop-in so it overrides distro defaults
+        # (SDDM reads /etc/sddm.conf.d/*.conf AFTER /etc/sddm.conf, so the
+        # drop-in wins over things like kde_settings.conf that ship with
+        # sddm-kcm and force Current=breeze).
+        sudo install -Dm644 "${DOTFILES_DIR}/config/sddm/sddm.conf" \
+            /etc/sddm.conf.d/10-dotfiles.conf \
+            || print_warning "Failed to install SDDM config"
+        print_success "SDDM config installed to /etc/sddm.conf.d/10-dotfiles.conf"
 
         # Check if Silent theme exists
         if [[ -d "/usr/share/sddm/themes/silent" ]]; then
